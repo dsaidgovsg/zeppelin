@@ -49,6 +49,11 @@ ENV SPARK_MASTER='local[*]'
 
 RUN mkdir -p /zeppelin/notebook
 
+RUN set -euo pipefail && \
+    wget https://github.com/datagovsg/zeppelin-jar-loader/releases/download/v0.1.0/zeppelin-jar-loader-v0.1.0.jar; \
+    mv zeppelin-jar-loader-v0.1.0.jar ${SPARK_JARS}/; \
+    :
+
 # Install Zeppelin config
 COPY docker /zeppelin
 CMD ["/zeppelin/run-zeppelin.sh"]
