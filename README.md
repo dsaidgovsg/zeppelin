@@ -1,5 +1,7 @@
 # Zeppelin
 
+[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/datagovsg%2Fzeppelin%2Fzeppelin?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/zeppelin/builds?repoOwner=datagovsg&repoName=zeppelin&serviceName=datagovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5cf86ebd38d1cd3c3a44c178~zeppelin)
+
 Zeppelin Dockerfile set-up with a wrapping dynamic GitHub releases JAR loader.
 
 This set-up is opinionated towards Spark, as such, many of the Spark
