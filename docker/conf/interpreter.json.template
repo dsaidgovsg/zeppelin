@@ -297,8 +297,8 @@
       "option": {
         "remote": true,
         "port": -1,
-        "perNote": "shared",
-        "perUser": "isolated",
+        "perNote": "{{ c.SPARK_INTERPRETER_PER_NOTE | default(value='isolated') }}",
+        "perUser": "{{ c.SPARK_INTERPRETER_PER_USER | default(value='isolated') }}",
         "isExistingProcess": false,
         "setPermission": false,
         "owners": [],
