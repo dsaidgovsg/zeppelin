@@ -21,19 +21,19 @@
 
 <property>
   <name>zeppelin.server.addr</name>
-  <value>0.0.0.0</value>
+  <value>{{ c.SERVER_ADDR | default(value="0.0.0.0") }}</value>
   <description>Server address</description>
 </property>
 
 <property>
   <name>zeppelin.server.port</name>
-  <value>{{ c.PORT | default(value=8667)}}</value>
+  <value>{{ c.ZEPPELIN_PORT | default(value=8080) }}</value>
   <description>Server port.</description>
 </property>
 
 <property>
   <name>zeppelin.server.ssl.port</name>
-  <value>8443</value>
+  <value>{{ c.ZEPPELIN_PORT | default(value=8443) }}</value>
   <description>Server ssl port. (used when ssl property is set to true)</description>
 </property>
 
@@ -51,7 +51,7 @@
 
 <property>
   <name>zeppelin.notebook.dir</name>
-  <value>notebook</value>
+  <value>{{ c.ZEPPELIN_NOTEBOOK }}</value>
   <description>path or URI for notebook persist</description>
 </property>
 
