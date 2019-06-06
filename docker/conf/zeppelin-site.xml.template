@@ -342,13 +342,13 @@
 
 <property>
   <name>zeppelin.ssl</name>
-  <value>false</value>
+  <value>{{ c.ZEPPELIN_SSL | default(value='false') }}</value>
   <description>Should SSL be used by the servers?</description>
 </property>
 
 <property>
   <name>zeppelin.ssl.client.auth</name>
-  <value>false</value>
+  <value>{{ c.ZEPPELIN_SSL_CLIENT_AUTH | default(value='false') }}</value>
   <description>Should client authentication be used for SSL connections?</description>
 </property>
 
