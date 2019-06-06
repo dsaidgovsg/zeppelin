@@ -1,0 +1,346 @@
+{
+  "interpreterSettings": {
+    "python": {
+      "id": "python",
+      "name": "python",
+      "group": "python",
+      "properties": {
+        "zeppelin.python": {
+          "name": "zeppelin.python",
+          "value": "python",
+          "type": "string"
+        },
+        "zeppelin.ipython.launch.timeout": {
+          "name": "zeppelin.ipython.launch.timeout",
+          "value": "30000",
+          "type": "number"
+        },
+        "zeppelin.python.useIPython": {
+          "name": "zeppelin.python.useIPython",
+          "value": true,
+          "type": "checkbox"
+        },
+        "zeppelin.ipython.grpc.message_size": {
+          "name": "zeppelin.ipython.grpc.message_size",
+          "value": "33554432",
+          "type": "number"
+        },
+        "zeppelin.python.maxResult": {
+          "name": "zeppelin.python.maxResult",
+          "value": "1000",
+          "type": "number"
+        }
+      },
+      "status": "READY",
+      "interpreterGroup": [
+        {
+          "name": "python",
+          "class": "org.apache.zeppelin.python.PythonInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "python",
+            "editOnDblClick": false,
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "ipython",
+          "class": "org.apache.zeppelin.python.IPythonInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "python",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "sql",
+          "class": "org.apache.zeppelin.python.PythonInterpreterPandasSql",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "sql",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": false
+          }
+        },
+        {
+          "name": "conda",
+          "class": "org.apache.zeppelin.python.PythonCondaInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "sh",
+            "editOnDblClick": false,
+            "completionSupport": false
+          }
+        },
+        {
+          "name": "docker",
+          "class": "org.apache.zeppelin.python.PythonDockerInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "sh",
+            "editOnDblClick": false,
+            "completionSupport": false
+          }
+        }
+      ],
+      "dependencies": [],
+      "option": {
+        "remote": true,
+        "port": -1,
+        "isExistingProcess": false,
+        "setPermission": false,
+        "owners": [],
+        "isUserImpersonate": false
+      }
+    },
+    "spark": {
+      "id": "spark",
+      "name": "spark",
+      "group": "spark",
+      "properties": {
+        "master": {
+          "name": "master",
+          "value": "{{ c.SPARK_MASTER | default(value='local[*]') }}",
+          "type": "string"
+        },
+        "spark.jars": {
+          "name": "spark.jars",
+          "value": "{{ c.SPARK_JARS | default(value='') }}"
+        },
+        "spark.submit.deployMode": {
+          "name": "spark.submit.deployMode",
+          "value": "{{ c.SPARK_SUBMIT_DEPLOYMODE | default(value='client') }}",
+          "type": "string"
+        },
+        "spark.app.name": {
+          "name": "spark.app.name",
+          "value": "{{ c.SPARK_APP_NAME | default(value='Zeppelin') }}",
+          "type": "string"
+        },
+        "args": {
+          "name": "args",
+          "value": "{{ c.SPARK_ARGS | default(value='') }}",
+          "type": "textarea"
+        },
+        "spark.executor.memory": {
+          "name": "spark.executor.memory",
+          "value": "{{ c.SPARK_EXECUTOR_MEMORY | default(value='4G') }}",
+          "type": "string"
+        },
+        "spark.cores.max": {
+          "name": "spark.cores.max",
+          "value": "{{ c.SPARK_CORES_MAX | default(value='') }}",
+          "type": "number"
+        },
+        "spark.shuffle.service.enabled": {
+          "name": "spark.shuffle.service.enabled",
+          "value": "{{ c.SPARK_SHUFFLE_SERVICE_ENABLED | default(value='true') }}",
+          "type": "string"
+        },
+        "spark.dynamicAllocation.enabled": {
+          "name": "spark.dynamicAllocation.enabled",
+          "value": "{{ c.SPARK_DYNAMICALLOCATION_ENABLED | default(value='true') }}",
+          "type": "string"
+        },
+        "spark.dynamicAllocation.maxExecutors": {
+          "name": "spark.dynamicAllocation.maxExecutors",
+          "value": "{{ c.SPARK_DYNAMICALLOCATION_MAXEXECUTORS | default(value='25') }}",
+          "type": "string"
+        },
+        "spark.dynamicAllocation.cachedExecutorIdleTimeout": {
+          "name": "spark.dynamicAllocation.cachedExecutorIdleTimeout",
+          "value": "{{ c.SPARK_DYNAMICALLOCATION_CACHEDEXECUTORIDLETIMEOUT | default(value='60s') }}",
+          "type": "string"
+        },
+        "zeppelin.spark.sql.interpolation": {
+          "name": "zeppelin.spark.sql.interpolation",
+          "value": {{ c.ZEPPELIN_SPARK_SQL_INTERPOLATION | default(value='false') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.concurrentSQL": {
+          "name": "zeppelin.spark.concurrentSQL",
+          "value": {{ c.ZEPPELIN_SPARK_CONCURRENTSQL | default(value='false') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.importImplicit": {
+          "name": "zeppelin.spark.importImplicit",
+          "value": {{ c.ZEPPELIN_SPARK_IMPORTIMPLICIT | default(value='true') }},
+          "type": "checkbox"
+        },
+        "zeppelin.dep.additionalRemoteRepository": {
+          "name": "zeppelin.dep.additionalRemoteRepository",
+          "value": "{{ c.ZEPPELIN_DEP_ADDITIONALREMOTEREPOSITORY | default(value='spark-packages,http://dl.bintray.com/spark-packages/maven,false;') }}",
+          "type": "textarea"
+        },
+        "zeppelin.spark.maxResult": {
+          "name": "zeppelin.spark.maxResult",
+          "value": "{{ c.ZEPPELIN_SPARK_MAXRESULT | default(value='1000') }}",
+          "type": "number"
+        },
+        "zeppelin.pyspark.python": {
+          "name": "zeppelin.pyspark.python",
+          "value": "{{ c.ZEPPELIN_PYSPARK_PYTHON | default(value='python') }}",
+          "type": "string"
+        },
+        "zeppelin.spark.enableSupportedVersionCheck": {
+          "name": "zeppelin.spark.enableSupportedVersionCheck",
+          "value": {{ c.ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK | default(value='true') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.useNew": {
+          "name": "zeppelin.spark.useNew",
+          "value": {{ c.ZEPPELIN_SPARK_USENEW | default(value='true') }},
+          "type": "checkbox"
+        },
+        "zeppelin.dep.localrepo": {
+          "name": "zeppelin.dep.localrepo",
+          "value": "{{ c.ZEPPELIN_DEP_LOCALREPO | default(value='local-repo') }}",
+          "type": "string"
+        },
+        "zeppelin.pyspark.useIPython": {
+          "name": "zeppelin.pyspark.useIPython",
+          "value": {{ c.ZEPPELIN_PYSPARK_USEIPYTHON | default(value='true') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.sql.stacktrace": {
+          "name": "zeppelin.spark.sql.stacktrace",
+          "value": {{ c.ZEPPELIN_SPARK_SQL_STACKTRACE | default(value='false') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.useHiveContext": {
+          "name": "zeppelin.spark.useHiveContext",
+          "value": {{ c.ZEPPELIN_SPARK_USEHIVECONTEXT | default(value='true') }},
+          "type": "checkbox"
+        },
+        "zeppelin.spark.uiWebUrl": {
+          "name": "zeppelin.spark.uiWebUrl",
+          "value": "{{ c.ZEPPELIN_SPARK_UIWEBURL | default(value='') }}",
+          "type": "string"
+        },
+        "zeppelin.spark.printREPLOutput": {
+          "name": "zeppelin.spark.printREPLOutput",
+          "value": {{ c.ZEPPELIN_SPARK_PRINTREPLOUTPUT | default(value='true') }},
+          "type": "checkbox"
+        }
+      },
+      "status": "READY",
+      "interpreterGroup": [
+        {
+          "name": "spark",
+          "class": "org.apache.zeppelin.spark.SparkInterpreter",
+          "defaultInterpreter": true,
+          "editor": {
+            "language": "scala",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "sql",
+          "class": "org.apache.zeppelin.spark.SparkSqlInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "sql",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "dep",
+          "class": "org.apache.zeppelin.spark.DepInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "scala",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "pyspark",
+          "class": "org.apache.zeppelin.spark.PySparkInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "python",
+            "editOnDblClick": false,
+            "completionKey": "TAB",
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "ipyspark",
+          "class": "org.apache.zeppelin.spark.IPySparkInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "python",
+            "editOnDblClick": false,
+            "completionSupport": true
+          }
+        },
+        {
+          "name": "r",
+          "class": "org.apache.zeppelin.spark.SparkRInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "language": "r",
+            "editOnDblClick": false,
+            "completionSupport": false
+          }
+        }
+      ],
+      "dependencies": [],
+      "option": {
+        "remote": true,
+        "port": -1,
+        "perNote": "shared",
+        "perUser": "isolated",
+        "isExistingProcess": false,
+        "setPermission": false,
+        "owners": [],
+        "isUserImpersonate": false
+      }
+    }
+  },
+  "interpreterBindings": {},
+  "interpreterRepositories": [
+    {
+      "id": "central",
+      "type": "default",
+      "url": "http://repo1.maven.org/maven2/",
+      "releasePolicy": {
+        "enabled": true,
+        "updatePolicy": "daily",
+        "checksumPolicy": "warn"
+      },
+      "snapshotPolicy": {
+        "enabled": true,
+        "updatePolicy": "daily",
+        "checksumPolicy": "warn"
+      },
+      "mirroredRepositories": [],
+      "repositoryManager": false
+    },
+    {
+      "id": "local",
+      "type": "default",
+      "url": "file:///root/.m2/repository",
+      "releasePolicy": {
+        "enabled": true,
+        "updatePolicy": "daily",
+        "checksumPolicy": "warn"
+      },
+      "snapshotPolicy": {
+        "enabled": true,
+        "updatePolicy": "daily",
+        "checksumPolicy": "warn"
+      },
+      "mirroredRepositories": [],
+      "repositoryManager": false
+    }
+  ]
+}
