@@ -32,16 +32,15 @@ RUN mkdir -p "${ZEPPELIN_NOTEBOOK}"
 
 ARG ZEPPELIN_VERSION=0.8.1
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
-ARG ZEPPELIN_OTHER_INTERPRETERS=
 
 # Install Zeppelin from pre-built package
-RUN set -euo pipefail && \
-    wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
-        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst; \
-    if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
+RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
+        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst
+
+ARG ZEPPELIN_OTHER_INTERPRETERS=
+RUN if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
         ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
-    fi; \
-    :
+    fi
 
 COPY docker ${ZEPPELIN_HOME}
 
