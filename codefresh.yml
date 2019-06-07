@@ -40,4 +40,4 @@ steps:
     composition_candidates:
       tester:
         image: gempesaw/curl-jq:latest
-        command: sh -c 'sleep 15 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
+        command: sh -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
