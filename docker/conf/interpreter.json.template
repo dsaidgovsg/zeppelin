@@ -236,7 +236,7 @@
             "language": "scala",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": true
+            "completionSupport": {{ c.ZEPPELIN_SPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -247,7 +247,7 @@
             "language": "sql",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": true
+            "completionSupport": {{ c.ZEPPELIN_SPARKSQLINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -258,7 +258,7 @@
             "language": "scala",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": true
+            "completionSupport": {{ c.ZEPPELIN_SPARKDEPINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -269,7 +269,7 @@
             "language": "python",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": true
+            "completionSupport": {{ c.ZEPPELIN_PYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -279,7 +279,7 @@
           "editor": {
             "language": "python",
             "editOnDblClick": false,
-            "completionSupport": true
+            "completionSupport": {{ c.ZEPPELIN_IPYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -289,7 +289,7 @@
           "editor": {
             "language": "r",
             "editOnDblClick": false,
-            "completionSupport": false
+            "completionSupport": {{ c.ZEPPELIN_SPARKRINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         }
       ],
