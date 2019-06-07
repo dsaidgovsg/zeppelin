@@ -2,6 +2,7 @@ version: '1.0'
 stages:
 - clone
 - build
+- test
 
 steps:
   main_clone:
@@ -23,3 +24,20 @@ steps:
     - ZEPPELIN_VERSION=0.8.1
     - SPARK_VERSION=2.4.0
     - HADOOP_VERSION=3.1.0
+
+  test_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+    type: composition
+    stage: test
+    title: Test image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
+    composition:
+      version: '2'
+      services:
+        zeppelin:
+          image: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}:0.8.1_spark-2.4.0_hadoop-3.1.0
+          ports:
+          - 8080
+    composition_candidates:
+      tester:
+        image: gempesaw/curl-jq:latest
+        command: sh -c 'sleep 15 && [ "$(curl -s http://zeppelin:8080/api/version | jq -r .status)" = "OK" ]'
