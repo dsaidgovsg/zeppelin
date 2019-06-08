@@ -20,16 +20,15 @@ RUN if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
         ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
     fi
 
-RUN set -euo pipefail && \
-    # Install Shiro authorization related JARs
-    wget -P ${ZEPPELIN_HOME}/lib/ http://central.maven.org/maven2/io/buji/buji-pac4j/4.0.0/buji-pac4j-4.0.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ http://central.maven.org/maven2/org/pac4j/pac4j-core/3.2.0/pac4j-core-3.2.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ http://central.maven.org/maven2/org/pac4j/pac4j-oauth/3.2.0/pac4j-oauth-3.2.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ http://central.maven.org/maven2/org/apache/shiro/shiro-web/1.4.0/shiro-web-1.4.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ http://central.maven.org/maven2/org/apache/shiro/shiro-core/1.4.0/shiro-core-1.4.0.jar; \
-    # Install JAR loader
-    wget -P ${SPARK_HOME}/jars/ https://github.com/datagovsg/zeppelin-jar-loader/releases/download/v0.1.0/zeppelin-jar-loader-v0.1.0.jar; \
-    :
+# Install JAR loader
+ARG ZEPPELIN_JAR_LOADER_VERSION=v0.2.0
+ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
+RUN wget -P ${SPARK_HOME}/jars/ https://github.com/datagovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader-${ZEPPELIN_JAR_LOADER_VERSION}.jar
+
+# Install env domain authorizer
+ARG PAC4J_AUTHORIZER_VERSION=v0.1.0
+ENV PAC4J_AUTHORIZER_VERSION "${PAC4J_AUTHORIZER_VERSION}"
+RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/datagovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer-${PAC4J_AUTHORIZER_VERSION}.jar
 
 RUN set -euo pipefail && \
     # Install gosu for non-root execution
