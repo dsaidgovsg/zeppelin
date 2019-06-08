@@ -2,7 +2,12 @@
 
 [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/datagovsg%2Fzeppelin%2Fzeppelin?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/zeppelin/builds?repoOwner=datagovsg&repoName=zeppelin&serviceName=datagovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5cf86ebd38d1cd3c3a44c178~zeppelin)
 
-Zeppelin Dockerfile set-up with a wrapping dynamic GitHub releases JAR loader.
+Zeppelin Dockerfile set-up with the following enhancements:
+
+- Dynamic GitHub releases JAR loader. See
+  [here](how-to-use-the-dynamic-JAR-loader) for how to use.
+- `pac4j` additional environment variable based email domain authorization.
+  See [here](https://github.com/datagovsg/pac4j-authorizer) for more details.
 
 This set-up is opinionated towards Spark, as such, many of the Spark
 configuration values are set as values that can be interpolated by
@@ -63,12 +68,12 @@ z.reset() /* z is an implicit value of type org.apache.zeppelin.spark.dep.SparkD
 // Saves JAR asset from GitHub release into local filesystem and loads JAR
 zepjarloader.github.Loader.loadJar(
     z,
-    "checkstyle/checkstyle",         /* github_owner/repo_name */
-    "checkstyle-8.21",               /* tag_name */
-    Some("checkstyle-8.21-all.jar"), /* Some(asset_name) if more than one assets, None if there's only one asset */
-    None,                            /* Some(sys.env.get("GITHUB_API_TOKEN").get) if private repo, None if no token needed */
-    "/tmp/checkstyle-8.21-all.jar",  /* local_file_path to save into */
-    true)                            /* Optional param (true), true to read from local_file_path first (cache), false to always fetch from scratch */
+    "checkstyle/checkstyle",    /* github_owner/repo_name */
+    "checkstyle-8.21",          /* tag_name */
+    "checkstyle-8.21-all.jar",  /* asset_name */
+    None,                       /* Some(sys.env.get("GITHUB_API_TOKEN").get) if private repo, None if no token needed */
+    "/tmp/",                    /* local_file_dir_or_path to save into */
+    true)                       /* Optional param (true), true to read from local_file_path first (cache), false to always fetch from scratch */
 ```
 
 Para #2
