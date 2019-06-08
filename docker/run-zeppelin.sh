@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -euo pipefail
 
+# Permit notebook directory to be written to
+chown -R zeppelin ${ZEPPELIN_NOTEBOOK}
+
+exec gosu zeppelin sh -c "
 # Find all .jar files and comma delimit into a string
 export SPARK_JARS=$(find "${SPARK_HOME}/jars/" -type f -name '*.jar' | paste -sd,)
 
@@ -14,10 +18,8 @@ tera -f ./conf/zeppelin-site.xml.template --env > ./conf/zeppelin-site.xml
 tera -f ./conf/shiro.ini.template --env > ./conf/shiro.ini
 
 # Protect potential secrets in shiro.ini
-chmod 600 ./conf/shiro.ini
-
-# Permit notebook directory to be written to
-chown -R zeppelin ${ZEPPELIN_NOTEBOOK}
+chmod 400 ./conf/shiro.ini
 
 # Start zeppelin
-exec ./bin/zeppelin.sh
+./bin/zeppelin.sh
+"
