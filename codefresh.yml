@@ -3,6 +3,7 @@ stages:
 - clone
 - build
 - test
+- push
 
 steps:
   main_clone:
@@ -14,12 +15,13 @@ steps:
     revision: ${{CF_REVISION}}
 
   # Step cannot contain period for now
+  # DO NOT push to the actual tag first, only push after PR is merged
   build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
     type: build
     stage: build
     title: Build image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
-    tag: 0.8.1_spark-2.4.0_hadoop-3.1.0
+    tag: test_0.8.1_spark-2.4.0_hadoop-3.1.0
     build_arguments:
     - ZEPPELIN_VERSION=0.8.1
     - SPARK_VERSION=2.4.0
@@ -43,3 +45,15 @@ steps:
       tester:
         image: gempesaw/curl-jq:latest
         command: sh -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
+
+  push_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+    type: push
+    stage: push
+    title: Push image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    candidate: ${{build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0}}
+    tag: 0.8.1_spark-2.4.0_hadoop-3.1.0
+    registry: cfcr
+    when:
+      branch:
+        only:
+        - master
