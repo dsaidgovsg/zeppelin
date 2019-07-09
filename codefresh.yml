@@ -16,29 +16,28 @@ steps:
 
   # Step cannot contain period for now
   # DO NOT push to the actual tag first, only push after PR is merged
-  build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  build_zeppelin-0_8_1_spark-2_4_3_hadoop-3_1_0_k8s:
     type: build
     stage: build
-    title: Build image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Build image zeppelin-0.8.1_spark-2.4.3_hadoop-3.1.0_k8s
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
-    tag: test_0.8.1_spark-2.4.0_hadoop-3.1.0
+    tag: test_0.8.1_spark-2.4.3_hadoop-3.1.0_k8s
     build_arguments:
+    - FROM_DOCKER_IMAGE=guangie88/spark-k8s-addons:2.4.3_hadoop-3.1.0
     - ZEPPELIN_VERSION=0.8.1
-    - SPARK_VERSION=2.4.0
-    - HADOOP_VERSION=3.1.0
     - ZEPPELIN_JAR_LOADER_VERSION=v0.2.0
     - PAC4J_AUTHORIZER_VERSION=v0.1.0
 
-  test_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  test_zeppelin-0_8_1_spark-2_4_3_hadoop-3_1_0_k8s:
     type: composition
     stage: test
-    title: Test image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Test image zeppelin-0.8.1_spark-2.4.3_hadoop-3.1.0_k8s
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     composition:
       version: '2'
       services:
         zeppelin:
-          image: ${{build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0}}
+          image: ${{build_zeppelin-0_8_1_spark-2_4_3_hadoop-3_1_0_k8s}}
           ports:
           - 8080
     composition_candidates:
@@ -46,12 +45,12 @@ steps:
         image: gempesaw/curl-jq:latest
         command: sh -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
 
-  push_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  push_zeppelin-0_8_1_spark-2_4_3_hadoop-3_1_0_k8s:
     type: push
     stage: push
-    title: Push image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
-    candidate: ${{build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0}}
-    tag: 0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Push image zeppelin-0.8.1_spark-2.4.3_hadoop-3.1.0_k8s
+    candidate: ${{build_zeppelin-0_8_1_spark-2_4_3_hadoop-3_1_0_k8s}}
+    tag: 0.8.1_spark-2.4.3_hadoop-3.1.0_k8s
     registry: cfcr
     when:
       branch:

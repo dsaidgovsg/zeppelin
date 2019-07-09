@@ -1,6 +1,4 @@
-ARG SPARK_VERSION=2.4.0
-ARG HADOOP_VERSION=3.1.0
-FROM guangie88/spark-custom-addons:${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_hive_pyspark_alpine
+FROM ${FROM_DOCKER_IMAGE}
 
 WORKDIR /zeppelin
 ENV ZEPPELIN_HOME "/zeppelin"
