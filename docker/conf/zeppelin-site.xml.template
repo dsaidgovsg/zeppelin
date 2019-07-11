@@ -440,9 +440,10 @@
   <description>Enable directory listings on server.</description>
 </property>
 
-<!--
+{%- if c.USE_INTERPRETER_LIFECYCLEMANAGER and c.USE_INTERPRETER_LIFECYCLEMANAGER == 'true' %}
+
 <property>
-  <name>zeppelin.interpreter.lifecyclemanager.class</name>
+  <name>{{ c.INTERPRETER_LIFECYCLEMANAGER_CLASS | default(value='zeppelin.interpreter.lifecyclemanager.class') }}</name>
   <value>org.apache.zeppelin.interpreter.lifecycle.TimeoutLifecycleManager</value>
   <description>LifecycleManager class for managing the lifecycle of interpreters, by default interpreter will
   be closed after timeout</description>
@@ -450,16 +451,16 @@
 
 <property>
   <name>zeppelin.interpreter.lifecyclemanager.timeout.checkinterval</name>
-  <value>60000</value>
+  <value>{{ c.INTERPRETER_LIFECYCLEMANAGER_TIMEOUT_CHECKINTERVAL | default(value=60000) }}</value>
   <description>Milliseconds of the interval to checking whether interpreter is time out</description>
 </property>
 
 <property>
   <name>zeppelin.interpreter.lifecyclemanager.timeout.threshold</name>
-  <value>3600000</value>
+  <value>{{ c.INTERPRETER_LIFECYCLEMANAGER_TIMEOUT_THRESHOLD | default(value=3600000) }}</value>
   <description>Milliseconds of the interpreter timeout threshold, by default it is 1 hour</description>
 </property>
--->
+{%- endif %}
 
 <!--
 <property>
