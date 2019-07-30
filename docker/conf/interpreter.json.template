@@ -130,6 +130,16 @@
           "value": "{{ c.SPARK_EXECUTOR_MEMORY | default(value='4G') }}",
           "type": "string"
         },
+        "spark.eventLog.enabled": {
+          "name": "spark.eventLog.enabled",
+          "value": "{{ c.SPARK_EVENTLOG_ENABLED | default(value='false') }}",
+          "type": "string"
+        },
+        "spark.eventLog.dir": {
+          "name": "spark.eventLog.dir",
+          "value": "{{ c.SPARK_EVENTLOG_DIR | default(value='') }}",
+          "type": "string"
+        },
         "spark.cores.max": {
           "name": "spark.cores.max",
           "value": "{{ c.SPARK_CORES_MAX | default(value='') }}",
