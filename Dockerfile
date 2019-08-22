@@ -10,6 +10,10 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 ARG ZEPPELIN_VERSION=0.8.1
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
 
+# Need to use back root to perform these actions
+# In any case the image is meant for Zeppelin with Spark-k8s extension, so it's okay to go with root
+USER root
+
 # Install Zeppelin from pre-built package
 RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
         tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst
@@ -34,7 +38,7 @@ RUN set -euo pipefail && \
     apk add --no-cache su-exec; \
     ln -s /sbin/su-exec /usr/bin/gosu; \
     # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.1.1/tera_linux_amd64; \
+    wget https://github.com/guangie88/tera-cli/releases/download/v0.2.0/tera_linux_amd64; \
     chmod +x tera_linux_amd64; \
     mv tera_linux_amd64 /usr/local/bin/tera; \
     :
