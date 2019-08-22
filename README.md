@@ -1,6 +1,6 @@
 # Zeppelin
 
-[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/datagovsg%2Fzeppelin%2Fzeppelin?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/zeppelin/builds?repoOwner=datagovsg&repoName=zeppelin&serviceName=datagovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5cf86ebd38d1cd3c3a44c178~zeppelin)
+[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/dsaidgovsg%2Fzeppelin%2Fzeppelin?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/zeppelin/builds?repoOwner=dsaidgovsg&repoName=zeppelin&serviceName=dsaidgovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5d5e4cd6e32ac26b357d3034~zeppelin)
 
 Zeppelin Dockerfile set-up with the following enhancements:
 
