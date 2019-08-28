@@ -103,136 +103,136 @@
       "properties": {
         "master": {
           "name": "master",
-          "value": "{{ c.SPARK_MASTER | default(value='local[*]') }}",
+          "value": "{{ SPARK_MASTER | default(value='local[*]') }}",
           "type": "string"
         },
         "spark.jars": {
           "name": "spark.jars",
-          "value": "{{ c.SPARK_JARS | default(value='') }}"
+          "value": "{{ SPARK_JARS | default(value='') }}"
         },
         "spark.submit.deployMode": {
           "name": "spark.submit.deployMode",
-          "value": "{{ c.SPARK_SUBMIT_DEPLOYMODE | default(value='client') }}",
+          "value": "{{ SPARK_SUBMIT_DEPLOYMODE | default(value='client') }}",
           "type": "string"
         },
         "spark.app.name": {
           "name": "spark.app.name",
-          "value": "{{ c.SPARK_APP_NAME | default(value='Zeppelin') }}",
+          "value": "{{ SPARK_APP_NAME | default(value='Zeppelin') }}",
           "type": "string"
         },
         "args": {
           "name": "args",
-          "value": "{{ c.SPARK_ARGS | default(value='') }}",
+          "value": "{{ SPARK_ARGS | default(value='') }}",
           "type": "textarea"
         },
         "spark.executor.memory": {
           "name": "spark.executor.memory",
-          "value": "{{ c.SPARK_EXECUTOR_MEMORY | default(value='4G') }}",
+          "value": "{{ SPARK_EXECUTOR_MEMORY | default(value='4G') }}",
           "type": "string"
         },
         "spark.eventLog.enabled": {
           "name": "spark.eventLog.enabled",
-          "value": "{{ c.SPARK_EVENTLOG_ENABLED | default(value='false') }}",
+          "value": "{{ SPARK_EVENTLOG_ENABLED | default(value='false') }}",
           "type": "string"
         },
         "spark.eventLog.dir": {
           "name": "spark.eventLog.dir",
-          "value": "{{ c.SPARK_EVENTLOG_DIR | default(value='') }}",
+          "value": "{{ SPARK_EVENTLOG_DIR | default(value='') }}",
           "type": "string"
         },
         "spark.cores.max": {
           "name": "spark.cores.max",
-          "value": "{{ c.SPARK_CORES_MAX | default(value='') }}",
+          "value": "{{ SPARK_CORES_MAX | default(value='') }}",
           "type": "number"
         },
         "spark.shuffle.service.enabled": {
           "name": "spark.shuffle.service.enabled",
-          "value": "{{ c.SPARK_SHUFFLE_SERVICE_ENABLED | default(value='true') }}",
+          "value": "{{ SPARK_SHUFFLE_SERVICE_ENABLED | default(value='true') }}",
           "type": "string"
         },
         "spark.dynamicAllocation.enabled": {
           "name": "spark.dynamicAllocation.enabled",
-          "value": "{{ c.SPARK_DYNAMICALLOCATION_ENABLED | default(value='true') }}",
+          "value": "{{ SPARK_DYNAMICALLOCATION_ENABLED | default(value='true') }}",
           "type": "string"
         },
         "spark.dynamicAllocation.maxExecutors": {
           "name": "spark.dynamicAllocation.maxExecutors",
-          "value": "{{ c.SPARK_DYNAMICALLOCATION_MAXEXECUTORS | default(value='25') }}",
+          "value": "{{ SPARK_DYNAMICALLOCATION_MAXEXECUTORS | default(value='25') }}",
           "type": "string"
         },
         "spark.dynamicAllocation.cachedExecutorIdleTimeout": {
           "name": "spark.dynamicAllocation.cachedExecutorIdleTimeout",
-          "value": "{{ c.SPARK_DYNAMICALLOCATION_CACHEDEXECUTORIDLETIMEOUT | default(value='60s') }}",
+          "value": "{{ SPARK_DYNAMICALLOCATION_CACHEDEXECUTORIDLETIMEOUT | default(value='60s') }}",
           "type": "string"
         },
         "zeppelin.spark.sql.interpolation": {
           "name": "zeppelin.spark.sql.interpolation",
-          "value": {{ c.ZEPPELIN_SPARK_SQL_INTERPOLATION | default(value='false') }},
+          "value": {{ ZEPPELIN_SPARK_SQL_INTERPOLATION | default(value='false') }},
           "type": "checkbox"
         },
         "zeppelin.spark.concurrentSQL": {
           "name": "zeppelin.spark.concurrentSQL",
-          "value": {{ c.ZEPPELIN_SPARK_CONCURRENTSQL | default(value='false') }},
+          "value": {{ ZEPPELIN_SPARK_CONCURRENTSQL | default(value='false') }},
           "type": "checkbox"
         },
         "zeppelin.spark.importImplicit": {
           "name": "zeppelin.spark.importImplicit",
-          "value": {{ c.ZEPPELIN_SPARK_IMPORTIMPLICIT | default(value='true') }},
+          "value": {{ ZEPPELIN_SPARK_IMPORTIMPLICIT | default(value='true') }},
           "type": "checkbox"
         },
         "zeppelin.dep.additionalRemoteRepository": {
           "name": "zeppelin.dep.additionalRemoteRepository",
-          "value": "{{ c.ZEPPELIN_DEP_ADDITIONALREMOTEREPOSITORY | default(value='spark-packages,http://dl.bintray.com/spark-packages/maven,false;') }}",
+          "value": "{{ ZEPPELIN_DEP_ADDITIONALREMOTEREPOSITORY | default(value='spark-packages,http://dl.bintray.com/spark-packages/maven,false;') }}",
           "type": "textarea"
         },
         "zeppelin.spark.maxResult": {
           "name": "zeppelin.spark.maxResult",
-          "value": "{{ c.ZEPPELIN_SPARK_MAXRESULT | default(value='1000') }}",
+          "value": "{{ ZEPPELIN_SPARK_MAXRESULT | default(value='1000') }}",
           "type": "number"
         },
         "zeppelin.pyspark.python": {
           "name": "zeppelin.pyspark.python",
-          "value": "{{ c.ZEPPELIN_PYSPARK_PYTHON | default(value='python') }}",
+          "value": "{{ ZEPPELIN_PYSPARK_PYTHON | default(value='python') }}",
           "type": "string"
         },
         "zeppelin.spark.enableSupportedVersionCheck": {
           "name": "zeppelin.spark.enableSupportedVersionCheck",
-          "value": {{ c.ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK | default(value='true') }},
+          "value": {{ ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK | default(value='true') }},
           "type": "checkbox"
         },
         "zeppelin.spark.useNew": {
           "name": "zeppelin.spark.useNew",
-          "value": {{ c.ZEPPELIN_SPARK_USENEW | default(value='true') }},
+          "value": {{ ZEPPELIN_SPARK_USENEW | default(value='true') }},
           "type": "checkbox"
         },
         "zeppelin.dep.localrepo": {
           "name": "zeppelin.dep.localrepo",
-          "value": "{{ c.ZEPPELIN_DEP_LOCALREPO | default(value='local-repo') }}",
+          "value": "{{ ZEPPELIN_DEP_LOCALREPO | default(value='local-repo') }}",
           "type": "string"
         },
         "zeppelin.pyspark.useIPython": {
           "name": "zeppelin.pyspark.useIPython",
-          "value": {{ c.ZEPPELIN_PYSPARK_USEIPYTHON | default(value='true') }},
+          "value": {{ ZEPPELIN_PYSPARK_USEIPYTHON | default(value='true') }},
           "type": "checkbox"
         },
         "zeppelin.spark.sql.stacktrace": {
           "name": "zeppelin.spark.sql.stacktrace",
-          "value": {{ c.ZEPPELIN_SPARK_SQL_STACKTRACE | default(value='false') }},
+          "value": {{ ZEPPELIN_SPARK_SQL_STACKTRACE | default(value='false') }},
           "type": "checkbox"
         },
         "zeppelin.spark.useHiveContext": {
           "name": "zeppelin.spark.useHiveContext",
-          "value": {{ c.ZEPPELIN_SPARK_USEHIVECONTEXT | default(value='true') }},
+          "value": {{ ZEPPELIN_SPARK_USEHIVECONTEXT | default(value='true') }},
           "type": "checkbox"
         },
         "zeppelin.spark.uiWebUrl": {
           "name": "zeppelin.spark.uiWebUrl",
-          "value": "{{ c.ZEPPELIN_SPARK_UIWEBURL | default(value='') }}",
+          "value": "{{ ZEPPELIN_SPARK_UIWEBURL | default(value='') }}",
           "type": "string"
         },
         "zeppelin.spark.printREPLOutput": {
           "name": "zeppelin.spark.printREPLOutput",
-          "value": {{ c.ZEPPELIN_SPARK_PRINTREPLOUTPUT | default(value='true') }},
+          "value": {{ ZEPPELIN_SPARK_PRINTREPLOUTPUT | default(value='true') }},
           "type": "checkbox"
         }
       },
@@ -246,7 +246,7 @@
             "language": "scala",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": {{ c.ZEPPELIN_SPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_SPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -257,7 +257,7 @@
             "language": "sql",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": {{ c.ZEPPELIN_SPARKSQLINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_SPARKSQLINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -268,7 +268,7 @@
             "language": "scala",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": {{ c.ZEPPELIN_SPARKDEPINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_SPARKDEPINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -279,7 +279,7 @@
             "language": "python",
             "editOnDblClick": false,
             "completionKey": "TAB",
-            "completionSupport": {{ c.ZEPPELIN_PYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_PYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -289,7 +289,7 @@
           "editor": {
             "language": "python",
             "editOnDblClick": false,
-            "completionSupport": {{ c.ZEPPELIN_IPYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_IPYSPARKINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         },
         {
@@ -299,7 +299,7 @@
           "editor": {
             "language": "r",
             "editOnDblClick": false,
-            "completionSupport": {{ c.ZEPPELIN_SPARKRINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
+            "completionSupport": {{ ZEPPELIN_SPARKRINTERPRETER_COMPLETION_SUPPORT | default(value='false') }}
           }
         }
       ],
@@ -307,8 +307,8 @@
       "option": {
         "remote": true,
         "port": -1,
-        "perNote": "{{ c.SPARK_INTERPRETER_PER_NOTE | default(value='isolated') }}",
-        "perUser": "{{ c.SPARK_INTERPRETER_PER_USER | default(value='isolated') }}",
+        "perNote": "{{ SPARK_INTERPRETER_PER_NOTE | default(value='isolated') }}",
+        "perUser": "{{ SPARK_INTERPRETER_PER_USER | default(value='isolated') }}",
         "isExistingProcess": false,
         "setPermission": false,
         "owners": [],
