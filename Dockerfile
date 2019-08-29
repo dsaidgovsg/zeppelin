@@ -1,13 +1,19 @@
-FROM maven:3-jdk-8-stretch
+FROM maven:3-jdk-8-slim
+SHELL ["/bin/bash", "-c"]
 
 ARG ZEPPELIN_REV="master"
 ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
 
 RUN set -euo pipefail && \
+    apt-get install -y nodejs \
     apt-get update && apt-get install -y --no-install-recommends \
         bzip2 \
+        curl \
         git \
         ; \
+    # Force Node 8.x because Node 10.x doesn't work
+    curl -sL https://deb.nodesource.com/setup_8.x | bash -; \
+    apt install nodejs=8* --no-install-recommends; \
     rm -rf /var/lib/apt/lists/*; \
     :
 
@@ -17,10 +23,13 @@ RUN set -euo pipefail && \
     git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
     :
 
-RUN set -euo pipefail && \
-    cd /tmp/zeppelin; \
-    mvn clean package -DskipTests -Pbuild-distr; \
-    :
+# node ./node_modules/protractor/bin/webdriver-manager update
+# npm run build:dist
+
+# RUN set -euo pipefail && \
+#     cd /tmp/zeppelin; \
+#     mvn clean package -DskipTests -Pbuild-distr; \
+#     :
 
 # ARG FROM_DOCKER_IMAGE=
 # FROM ${FROM_DOCKER_IMAGE}
