@@ -1,32 +1,44 @@
-ARG FROM_DOCKER_IMAGE=
-FROM ${FROM_DOCKER_IMAGE}
+FROM maven:3-jdk-8-stretch
 
-WORKDIR /zeppelin
-ENV ZEPPELIN_HOME "/zeppelin"
-RUN mkdir -p "${ZEPPELIN_HOME}"
-
-ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
-
-ARG ZEPPELIN_VERSION=0.8.1
-ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
-
+ARG ZEPPELIN_REV="master"
 ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
 
-# Need to use back root to perform these actions
-# In any case the image is meant for Zeppelin with Spark-k8s extension, so it's okay to go with root
-USER root
-
 RUN set -euo pipefail && \
-    apk add --no-cache git; \
+    apt-get update && apt-get install -y --no-install-recommends \
+        bzip2 \
+        git \
+        ; \
+    rm -rf /var/lib/apt/lists/*; \
     :
 
 # Build from source and install from tar package
-# RUN set -euo pipefail && \
-#     cd /tmp; \
-#     git clone ${ZEPPELIN_GIT_URL} --depth=1; \
-#     cd zeppelin; \
-#     mvn clean package -DskipTests -Pbuild-distr; \
-#     :
+RUN set -euo pipefail && \
+    cd /tmp; \
+    git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
+    :
+
+RUN set -euo pipefail && \
+    cd /tmp/zeppelin; \
+    mvn clean package -DskipTests -Pbuild-distr; \
+    :
+
+# ARG FROM_DOCKER_IMAGE=
+# FROM ${FROM_DOCKER_IMAGE}
+
+# WORKDIR /zeppelin
+# ENV ZEPPELIN_HOME "/zeppelin"
+# RUN mkdir -p "${ZEPPELIN_HOME}"
+
+# ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
+
+
+# ARG ZEPPELIN_VERSION=0.8.1
+# ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
+
+
+# # Need to use back root to perform these actions
+# # In any case the image is meant for Zeppelin with Spark-k8s extension, so it's okay to go with root
+# USER root
 
 # # Install Zeppelin from pre-built package
 # RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
