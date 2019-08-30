@@ -7,7 +7,7 @@ Zeppelin Dockerfile set-up with the following enhancements:
 - Dynamic GitHub releases JAR loader. See
   [here](#how-to-use-the-dynamic-JAR-loader) for how to use.
 - `pac4j` additional environment variable based email domain authorization.
-  See [here](https://github.com/datagovsg/pac4j-authorizer) for more details.
+  See [here](https://github.com/dsaidgovsg/pac4j-authorizer) for more details.
 
 This set-up is opinionated towards Spark, as such, many of the Spark
 configuration values are set as values that can be interpolated by
