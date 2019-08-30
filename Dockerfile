@@ -34,17 +34,15 @@ RUN set -euo pipefail && \
 
 FROM ${FROM_DOCKER_IMAGE}
 
-WORKDIR /zeppelin
 ENV ZEPPELIN_HOME "/zeppelin"
-RUN mkdir -p "${ZEPPELIN_HOME}"
+COPY --from=builder /tmp/zeppelin/zeppelin-distribution/target/zeppelin-0.9.0-SNAPSHOT/zeppelin-0.9.0-SNAPSHOT "${ZEPPELIN_HOME}"
 
+WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 
 # Need to use back root to perform these actions
 # In any case the image is meant for Zeppelin with Spark-k8s extension, so it's okay to go with root
 USER root
-
-COPY --from=builder /tmp/zeppelin/zeppelin-distribution/target/zeppelin-0.9.0-SNAPSHOT "${ZEPPELIN_HOME}"
 
 # # Install Zeppelin from pre-built package
 # RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
