@@ -44,15 +44,6 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 # In any case the image is meant for Zeppelin with Spark-k8s extension, so it's okay to go with root
 USER root
 
-# # Install Zeppelin from pre-built package
-# RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
-#         tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst
-
-# ARG ZEPPELIN_OTHER_INTERPRETERS=
-# RUN if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
-#         ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
-#     fi
-
 # Install JAR loader
 ARG ZEPPELIN_JAR_LOADER_VERSION=v0.2.0
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
