@@ -3,7 +3,6 @@ ARG FROM_DOCKER_IMAGE=
 FROM maven:3-jdk-8-slim as builder
 SHELL ["/bin/bash", "-c"]
 
-ARG TOUCH
 ARG ZEPPELIN_REV="master"
 ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
 
