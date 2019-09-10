@@ -34,8 +34,8 @@ RUN set -euo pipefail && \
     git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
     cd -; \
     cd /tmp/zeppelin; \
-    ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
-    mvn clean package -DskipTests -Pbuild-distr "-Pscala-${SCALA_VERSION}"; \
+    # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
+    mvn clean package -DskipTests -Pbuild-distr "-Pspark-scala-${SCALA_VERSION}" "-Pscala-${SCALA_VERSION}"; \
     cd -; \
     :
 
