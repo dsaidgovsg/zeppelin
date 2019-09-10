@@ -7,8 +7,7 @@ ARG PYTHON_VERSION="3.7"
 FROM maven:3-jdk-8-slim as builder
 SHELL ["/bin/bash", "-c"]
 
-ARG ZEPPELIN_REV="v0.8.1"
-ARG ZEPPELIN_VERSION="0.8.1"
+ARG ZEPPELIN_REV="master"
 ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
 
 RUN set -euo pipefail && \
@@ -35,20 +34,21 @@ RUN set -euo pipefail && \
     git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
     cd -; \
     cd /tmp/zeppelin; \
+    ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
     mvn clean package -DskipTests -Pbuild-distr "-Pscala-${SCALA_VERSION}"; \
     cd -; \
     :
 
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
+ARG ZEPPELIN_VERSION="0.9.0-SNAPSHOT"
+ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
+
 ENV ZEPPELIN_HOME "/zeppelin"
 COPY --from=builder "/tmp/zeppelin/zeppelin-distribution/target/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}" "${ZEPPELIN_HOME}"
 
 WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
-
-ARG ZEPPELIN_VERSION
-ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
 
 # Install JAR loader
 ARG SCALA_VERSION
