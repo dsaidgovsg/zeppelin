@@ -15,18 +15,24 @@ ARG ZEPPELIN_VERSION
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
 
 # Install Zeppelin from pre-built package
-RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
-        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst
+ARG ZEPPELIN_OTHER_INTERPRETERS
 
-ARG ZEPPELIN_OTHER_INTERPRETERS=
-RUN if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
+RUN set -euo pipefail && \
+    wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
+        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst; \
+    if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
         ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
-    fi
+    fi; \
+    :
 
 # Install JAR loader
 ARG ZEPPELIN_JAR_LOADER_VERSION=v0.2.1
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-RUN wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar
+ARG SCALA_VERSION
+
+RUN set -euo pipefail && \
+    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
+    :
 
 RUN set -euo pipefail && \
     # Install gosu for non-root execution
@@ -46,4 +52,4 @@ ENV ZEPPELIN_IMPERSONATE_USER zeppelin
 ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
 ENV ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER false
 
-CMD ["sh", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
+CMD ["${ZEPPELIN_HOME}/run-zeppelin.sh"]
