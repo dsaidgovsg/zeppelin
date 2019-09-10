@@ -1,8 +1,8 @@
-ARG SPARK_VERSION=
-ARG SCALA_VERSION=
-ARG HADOOP_VERSION=
+ARG SPARK_VERSION
+ARG SCALA_VERSION
+ARG HADOOP_VERSION
 # Python version doesn't matter much for Zeppelin, so we just default to latest
-ARG PYTHON_VERSION=3.7
+ARG PYTHON_VERSION="3.7"
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
 WORKDIR /zeppelin
@@ -15,7 +15,7 @@ ARG ZEPPELIN_VERSION
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
 
 # Install Zeppelin from pre-built package
-ARG ZEPPELIN_OTHER_INTERPRETERS
+ARG ZEPPELIN_OTHER_INTERPRETERS=""
 
 RUN set -euo pipefail && \
     wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
@@ -26,7 +26,7 @@ RUN set -euo pipefail && \
     :
 
 # Install JAR loader
-ARG ZEPPELIN_JAR_LOADER_VERSION=v0.2.1
+ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
 ARG SCALA_VERSION
 
