@@ -26,12 +26,22 @@ RUN set -euo pipefail && \
     :
 
 # Install JAR loader
+ARG SCALA_VERSION
+
 ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-ARG SCALA_VERSION
 
 RUN set -euo pipefail && \
     wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
+    :
+
+# Install custom OAuth authorizer with env domain checker
+# This is required even for general pac4j.oauth
+ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
+ENV PAC4J_AUTHORIZER_VERSION "${PAC4J_AUTHORIZER_VERSION}"
+
+RUN set -euo pipefail && \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar; \
     :
 
 RUN set -euo pipefail && \
