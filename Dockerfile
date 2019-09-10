@@ -3,27 +3,52 @@ ARG SCALA_VERSION
 ARG HADOOP_VERSION
 # Python version doesn't matter much for Zeppelin, so we just default to latest
 ARG PYTHON_VERSION="3.7"
+
+FROM maven:3-jdk-8-slim as builder
+SHELL ["/bin/bash", "-c"]
+
+ARG ZEPPELIN_REV="v0.8.1"
+ARG ZEPPELIN_VERSION="0.8.1"
+ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
+
+RUN set -euo pipefail && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        bzip2 \
+        curl \
+        git \
+        ; \
+    # Force Node 8.x because Node 10.x doesn't work
+    curl -sL https://deb.nodesource.com/setup_8.x | bash -; \
+    apt-get install -y --no-install-recommends nodejs=8*; \
+    rm -rf /var/lib/apt/lists/*; \
+    :
+
+# bower install step in zeppelin-web cannot be easily done as root user
+RUN adduser --disabled-password --gecos "" installer
+USER installer
+
+ARG SCALA_VERSION
+
+# Build from source and install from tar package
+RUN set -euo pipefail && \
+    cd /tmp; \
+    git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
+    cd -; \
+    cd /tmp/zeppelin; \
+    mvn clean package -DskipTests -Pbuild-distr "-Pscala-${SCALA_VERSION}"; \
+    cd -; \
+    :
+
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
-WORKDIR /zeppelin
 ENV ZEPPELIN_HOME "/zeppelin"
-RUN mkdir -p "${ZEPPELIN_HOME}"
+COPY --from=builder "/tmp/zeppelin/zeppelin-distribution/target/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}" "${ZEPPELIN_HOME}"
 
+WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 
 ARG ZEPPELIN_VERSION
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
-
-# Install Zeppelin from pre-built package
-ARG ZEPPELIN_OTHER_INTERPRETERS=""
-
-RUN set -euo pipefail && \
-    wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
-        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst; \
-    if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
-        ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
-    fi; \
-    :
 
 # Install JAR loader
 ARG SCALA_VERSION
