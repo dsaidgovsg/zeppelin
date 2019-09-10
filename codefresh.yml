@@ -22,12 +22,12 @@ steps:
     stage: build
     title: Build image zeppelin
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
-    tag: test_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}
+    tag: test_${{ZEPPELIN_VERSION}}_spark-${{SPARK_VERSION}}_scala-${{SCALA_VERSION}}_hadoop-${{HADOOP_VERSION}}
     build_arguments:
-    - ZEPPELIN_VERSION=${ZEPPELIN_VERSION}
-    - SPARK_VERSION=${SPARK_VERSION}
-    - SCALA_VERSION=${SCALA_VERSION}
-    - HADOOP_VERSION=${HADOOP_VERSION}
+    - ZEPPELIN_VERSION=${{ZEPPELIN_VERSION}}
+    - SPARK_VERSION=${{SPARK_VERSION}}
+    - SCALA_VERSION=${{SCALA_VERSION}}
+    - HADOOP_VERSION=${{HADOOP_VERSION}}
 
   test_zeppelin:
     type: composition
@@ -51,7 +51,7 @@ steps:
     stage: push
     title: Push image zeppelin
     candidate: ${{build_zeppelin}}
-    tag: ${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}
+    tag: ${{ZEPPELIN_VERSION}}_spark-${{SPARK_VERSION}}_scala-${{SCALA_VERSION}}_hadoop-${{HADOOP_VERSION}}
     registry: cfcr
     when:
       branch:
