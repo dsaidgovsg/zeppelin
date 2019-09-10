@@ -52,4 +52,5 @@ ENV ZEPPELIN_IMPERSONATE_USER zeppelin
 ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
 ENV ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER false
 
-CMD ["${ZEPPELIN_HOME}/run-zeppelin.sh"]
+# Env var not expanded without Dockerfile, so need to go through sh
+CMD ["sh", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
