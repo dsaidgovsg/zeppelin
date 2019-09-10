@@ -1,6 +1,9 @@
-ARG SPARK_VERSION=2.4.0
-ARG HADOOP_VERSION=3.1.0
-FROM guangie88/spark-custom-addons:${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_hive_pyspark_alpine
+ARG SPARK_VERSION
+ARG SCALA_VERSION
+ARG HADOOP_VERSION
+# Python version doesn't matter much for Zeppelin, so we just default to latest
+ARG PYTHON_VERSION="3.7"
+FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
 WORKDIR /zeppelin
 ENV ZEPPELIN_HOME "/zeppelin"
@@ -8,34 +11,35 @@ RUN mkdir -p "${ZEPPELIN_HOME}"
 
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 
-ARG ZEPPELIN_VERSION=0.8.1
+ARG ZEPPELIN_VERSION
 ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
 
 # Install Zeppelin from pre-built package
-RUN wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
-        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst
+ARG ZEPPELIN_OTHER_INTERPRETERS=""
 
-ARG ZEPPELIN_OTHER_INTERPRETERS=
-RUN if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
+RUN set -euo pipefail && \
+    wget -O - https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz | \
+        tar xz --strip-components=1 -C ${ZEPPELIN_HOME} zeppelin-${ZEPPELIN_VERSION}-bin-netinst; \
+    if [ ! -z "${ZEPPELIN_OTHER_INTERPRETERS}" ]; then \
         ./bin/install-interpreter.sh --name "${ZEPPELIN_OTHER_INTERPRETERS}"; \
-    fi
+    fi; \
+    :
 
 # Install JAR loader
-ARG ZEPPELIN_JAR_LOADER_VERSION=v0.2.0
+ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-RUN wget -P ${SPARK_HOME}/jars/ https://github.com/datagovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader-${ZEPPELIN_JAR_LOADER_VERSION}.jar
+ARG SCALA_VERSION
 
-# Install env domain authorizer
-ARG PAC4J_AUTHORIZER_VERSION=v0.1.0
-ENV PAC4J_AUTHORIZER_VERSION "${PAC4J_AUTHORIZER_VERSION}"
-RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/datagovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer-${PAC4J_AUTHORIZER_VERSION}.jar
+RUN set -euo pipefail && \
+    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
+    :
 
 RUN set -euo pipefail && \
     # Install gosu for non-root execution
     apk add --no-cache su-exec; \
     ln -s /sbin/su-exec /usr/bin/gosu; \
     # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.1.1/tera_linux_amd64; \
+    wget https://github.com/guangie88/tera-cli/releases/download/v0.2.1/tera_linux_amd64; \
     chmod +x tera_linux_amd64; \
     mv tera_linux_amd64 /usr/local/bin/tera; \
     :
@@ -48,4 +52,5 @@ ENV ZEPPELIN_IMPERSONATE_USER zeppelin
 ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
 ENV ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER false
 
+# Env var not expanded without Dockerfile, so need to go through sh
 CMD ["sh", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]

@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Find all .jar files and comma delimit into a string
-export SPARK_JARS=$(find "${SPARK_HOME}/jars/" -type f -name '*.jar' | paste -sd,)
+SPARK_JARS="$(find "${SPARK_HOME}/jars/" -type f -name '*.jar' | paste -sd,)"
+export SPARK_JARS
 
 # Create interpreter.json
 tera -f ./conf/interpreter.json.template --env > ./conf/interpreter.json
@@ -17,7 +18,7 @@ tera -f ./conf/shiro.ini.template --env > ./conf/shiro.ini
 chmod 600 ./conf/shiro.ini
 
 # Permit notebook directory to be written to
-chown -R zeppelin ${ZEPPELIN_NOTEBOOK}
+chown -R zeppelin "${ZEPPELIN_NOTEBOOK}"
 
 # Start zeppelin
 exec ./bin/zeppelin.sh
