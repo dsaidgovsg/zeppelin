@@ -5,6 +5,7 @@ stages:
 - test
 - push
 
+# Requires SCALA_VERSION (just x.y) to be specified
 steps:
   main_clone:
     title: Clone main repository
@@ -16,29 +17,28 @@ steps:
 
   # Step cannot contain period for now
   # DO NOT push to the actual tag first, only push after PR is merged
-  build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  build_zeppelin:
     type: build
     stage: build
-    title: Build image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Build image zeppelin
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
-    tag: test_0.8.1_spark-2.4.0_hadoop-3.1.0
+    tag: test_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}
     build_arguments:
-    - ZEPPELIN_VERSION=0.8.1
-    - SPARK_VERSION=2.4.0
-    - HADOOP_VERSION=3.1.0
-    - ZEPPELIN_JAR_LOADER_VERSION=v0.2.0
-    - PAC4J_AUTHORIZER_VERSION=v0.1.0
+    - ZEPPELIN_VERSION=${ZEPPELIN_VERSION}
+    - SPARK_VERSION=${SPARK_VERSION}
+    - SCALA_VERSION=${SCALA_VERSION}
+    - HADOOP_VERSION=${HADOOP_VERSION}
 
-  test_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  test_zeppelin:
     type: composition
     stage: test
-    title: Test image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Test image zeppelin
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     composition:
       version: '2'
       services:
         zeppelin:
-          image: ${{build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0}}
+          image: ${{build_zeppelin}}
           ports:
           - 8080
     composition_candidates:
@@ -46,12 +46,12 @@ steps:
         image: gempesaw/curl-jq:latest
         command: sh -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
 
-  push_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0:
+  push_zeppelin:
     type: push
     stage: push
-    title: Push image zeppelin-0.8.1_spark-2.4.0_hadoop-3.1.0
-    candidate: ${{build_zeppelin-0_8_1_spark-2_4_0_hadoop-3_1_0}}
-    tag: 0.8.1_spark-2.4.0_hadoop-3.1.0
+    title: Push image zeppelin
+    candidate: ${{build_zeppelin}}
+    tag: ${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}
     registry: cfcr
     when:
       branch:
