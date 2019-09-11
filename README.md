@@ -7,7 +7,11 @@
 Zeppelin Dockerfile set-up with the following enhancements:
 
 - Dynamic GitHub releases JAR loader. See
-  [here](#how-to-use-the-dynamic-JAR-loader) for how to use.
+  [here](#how-to-use-the-dynamic-JAR-loader) for how to use. Original repo is in
+  [here](https://github.com/dsaidgovsg/zeppelin-jar-loader).
+- `pac4j` additional environment variable based email domain authorization.
+  See original repo [here](https://github.com/dsaidgovsg/pac4j-authorizer) for
+  more details.
 
 This set-up is opinionated towards Spark, as such, many of the Spark
 configuration values are set as values that can be interpolated by
@@ -24,10 +28,23 @@ Check:
 to get a better feel for the above explanation. Search for `{{` to quickly get
 all the values that can be interpolated by environment variables.
 
+This repo tries its best to never change the environment variables once they are
+part of the above template files, but note that this is a best effort attempt
+and there is indeed a change of naming (or removal), this would not be reflected
+in the Docker image tags.
+
 ## How to have a quick local deployment demo
 
 ```bash
-docker build . -t zeppelin
+SPARK_VERSION="2.4.4"
+SCALA_VERSION="2.12"
+HADOOP_VERSION="3.1.0"
+
+docker build . -t zeppelin \
+    --build-arg SPARK_VERSION="${SPARK_VERSION}" \
+    --build-arg SCALA_VERSION="${SCALA_VERSION}" \
+    --build-arg HADOOP_VERSION="${HADOOP_VERSION}"
+
 docker run --rm -it --name zeppelin -p 8080:8080 zeppelin
 ```
 
@@ -54,8 +71,8 @@ repository or local filesystem. See
 [this](https://zeppelin.apache.org/docs/latest/interpreter/spark.html#3-dynamic-dependency-loading-via-sparkdep-interpreter)
 for more details.
 
-This set-up enhances this capability by
-installing a special JAR to do loading from GitHub release JAR assets.
+This set-up enhances this capability by installing a special JAR to do loading
+from GitHub release JAR assets.
 
 ### Example
 

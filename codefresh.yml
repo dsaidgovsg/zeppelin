@@ -1,6 +1,7 @@
 version: '1.0'
 stages:
 - clone
+- misc
 - build
 - test
 - push
@@ -15,6 +16,14 @@ steps:
     repo: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     revision: ${{CF_REVISION}}
 
+  extract_zeppelin_version:
+    title: Extract Zeppelin x.y.z version
+    stage: misc
+    image: alpine:3.10
+    commands:
+    - apk add --no-cache curl
+    - cf_export ZEPPELIN_VERSION="$(curl -sL "https://github.com/apache/zeppelin/raw/${ZEPPELIN_REV}/pom.xml" | grep "<name>Zeppelin</name>" -B1 | grep "<version>" | grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-SNAPSHOT)?")"
+
   # Step cannot contain period for now
   # DO NOT push to the actual tag first, only push after PR is merged
   build_zeppelin:
@@ -24,7 +33,7 @@ steps:
     image_name: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
     tag: test_${{ZEPPELIN_VERSION}}_spark-${{SPARK_VERSION}}_scala-${{SCALA_VERSION}}_hadoop-${{HADOOP_VERSION}}
     build_arguments:
-    - ZEPPELIN_VERSION=${{ZEPPELIN_VERSION}}
+    - ZEPPELIN_REV=${{ZEPPELIN_REV}}
     - SPARK_VERSION=${{SPARK_VERSION}}
     - SCALA_VERSION=${{SCALA_VERSION}}
     - HADOOP_VERSION=${{HADOOP_VERSION}}
