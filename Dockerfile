@@ -8,7 +8,7 @@ FROM maven:3-jdk-8-slim as builder
 SHELL ["/bin/bash", "-c"]
 
 ARG ZEPPELIN_REV="master"
-ARG ZEPPELIN_GIT_URL=https://github.com/apache/zeppelin.git
+ARG ZEPPELIN_GIT_URL="https://github.com/apache/zeppelin.git"
 
 RUN set -euo pipefail && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -48,11 +48,16 @@ RUN set -euo pipefail && \
 
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
-ARG ZEPPELIN_VERSION="0.9.0-SNAPSHOT"
-ENV ZEPPELIN_VERSION "${ZEPPELIN_VERSION}"
-
+ARG ZEPPELIN_REV="master"
 ENV ZEPPELIN_HOME "/zeppelin"
-COPY --from=builder "/tmp/zeppelin/zeppelin-distribution/target/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}" "${ZEPPELIN_HOME}"
+
+# The name of zeppelin directory might not be the same as the ZEPPELIN_REV, especially when building "master" where the directory might be "zeppelin-0.9.0-SNAPSHOT"
+# Below can get the actual Zeppelin version, but can only be done within Docker RUN commands
+# ZEPPELIN_TRIMMED_GIT_URL="$(echo "${ZEPPELIN_GIT_URL}" | sed -E 's/(.+)\.git/\1/gI')"
+# ZEPPELIN_VERSION="$(curl -sL "${ZEPPELIN_TRIMMED_GIT_URL}/raw/${ZEPPELIN_REV}/pom.xml" | grep "<name>Zeppelin</name>" -B1 | grep "<version>" | grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-SNAPSHOT)?")"
+
+# Usage of wildcard works, but be aware that only the files within zeppelin-**/zeppelin-**/ will be copied over
+COPY --from=builder "/tmp/zeppelin/zeppelin-distribution/target/zeppelin-**/zeppelin-**" "${ZEPPELIN_HOME}"
 
 WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
@@ -79,7 +84,7 @@ RUN set -euo pipefail && \
 RUN set -euo pipefail && \
     # Install gosu for non-root execution
     apk add --no-cache su-exec; \
-    ln -s /sbin/su-exec /usr/bin/gosu; \
+    ln -s /sbin/su-exec /usr/local/bin/gosu; \
     # Install tera-cli for runtime interpolation
     wget https://github.com/guangie88/tera-cli/releases/download/v0.2.1/tera_linux_amd64; \
     chmod +x tera_linux_amd64; \
