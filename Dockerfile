@@ -26,7 +26,9 @@ RUN set -euo pipefail && \
 RUN adduser --disabled-password --gecos "" installer
 USER installer
 
+ARG SPARK_VERSION
 ARG SCALA_VERSION
+ARG HADOOP_VERSION
 
 # Build from source and install from tar package
 RUN set -euo pipefail && \
@@ -34,8 +36,13 @@ RUN set -euo pipefail && \
     git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
     cd -; \
     cd /tmp/zeppelin; \
+    SPARK_XY_VERSION="$(echo "${SPARK_VERSION}" | cut -d '.' -f1,2 | tr -d '\n')"; \
+    HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
+    # change_scala_version.sh seems deprecated, doesn't even support 2.12 as a param
     # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
-    mvn clean package -DskipTests -Pbuild-distr "-Pspark-scala-${SCALA_VERSION}" "-Pscala-${SCALA_VERSION}"; \
+    # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
+    # Ignore -Pscala-${SCALA_VERSION} which is now no longer a valid flag
+    mvn clean package -DskipTests -Pbuild-distr "-Pspark-${SPARK_XY_VERSION}" "-Phadoop${HADOOP_X_VERSION}" "-Pspark-scala-${SCALA_VERSION}"; \
     cd -; \
     :
 
