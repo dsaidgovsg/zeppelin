@@ -44,7 +44,7 @@ RUN set -euo pipefail && \
     # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
     # Ignore -Pscala-${SCALA_VERSION} which is now no longer a valid flag
     # Build only the following modules
-    INTERPRETERS="!beam,!hbase,!pig,!jdbc,!file,!ignite,!kylin,!lens,!cassandra,!elasticsearch,!bigquery,!alluxio,!scio,!livy,!groovy,!sap,!java,!geode,!neo4j,!hazelcastjet,!submarine,!flink,!angular,!markdown,!scalding"; \
+    INTERPRETERS="!beam,!hbase,!pig,!jdbc,!file,!ignite,!kylin,!lens,!cassandra,!elasticsearch,!bigquery,!alluxio,!scio,!livy,!groovy,!sap,!java,!geode,!neo4j,!hazelcastjet,!submarine,!flink,!angular,!scalding"; \
     FLAGS="-DskipTests -Pbuild-distr"; \
     MODULES="-pl ${INTERPRETERS}"; \
     PROFILES="-Pspark-${SPARK_XY_VERSION} -Pspark-scala-${SCALA_VERSION} -Phadoop2"; \
