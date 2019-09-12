@@ -37,12 +37,13 @@ RUN set -euo pipefail && \
     cd -; \
     cd /tmp/zeppelin; \
     SPARK_XY_VERSION="$(echo "${SPARK_VERSION}" | cut -d '.' -f1,2 | tr -d '\n')"; \
-    HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
+    # Changing to Hadoop 3 seems to fail the Zeppelin-interpreter setup
+    # HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
     # change_scala_version.sh seems deprecated, doesn't even support 2.12 as a param
     # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
     # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
     # Ignore -Pscala-${SCALA_VERSION} which is now no longer a valid flag
-    mvn clean package -DskipTests -Pbuild-distr "-Pspark-${SPARK_XY_VERSION}" "-Phadoop${HADOOP_X_VERSION}" "-Pspark-scala-${SCALA_VERSION}"; \
+    mvn clean package -DskipTests -Pbuild-distr "-Pspark-${SPARK_XY_VERSION}" "-Pspark-scala-${SCALA_VERSION}" "-Phadoop2"; \
     cd -; \
     :
 
