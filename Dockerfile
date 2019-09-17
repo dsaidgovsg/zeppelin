@@ -65,13 +65,6 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 # Install JAR loader
 ARG SCALA_VERSION
 
-ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
-ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-
-RUN set -euo pipefail && \
-    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
-    :
-
 # Install custom OAuth authorizer with env domain checker
 # This is required even for general pac4j.oauth
 ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
