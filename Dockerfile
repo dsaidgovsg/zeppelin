@@ -42,7 +42,11 @@ RUN set -euo pipefail && \
     # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
     # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
     # Ignore -Pscala-${SCALA_VERSION} which is now no longer a valid flag
-    mvn clean package -DskipTests -Pbuild-distr "-Pspark-${SPARK_XY_VERSION}" "-Phadoop${HADOOP_X_VERSION}" "-Pspark-scala-${SCALA_VERSION}"; \
+    INTERPRETERS="!beam,!hbase,!pig,!jdbc,!file,!ignite,!kylin,!lens,!cassandra,!elasticsearch,!bigquery,!alluxio,!scio,!livy,!groovy,!sap,!java,!geode,!neo4j,!hazelcastjet,!submarine,!flink,!angular,!scalding"; \
+    FLAGS="-DskipTests -Pbuild-distr"; \
+    MODULES="-pl ${INTERPRETERS}"; \
+    PROFILES="-Pspark-${SPARK_XY_VERSION} -Pspark-scala-${SCALA_VERSION} -Phadoop${HADOOP_X_VERSION}"; \
+    mvn clean package ${FLAGS} ${MODULES} ${PROFILES}; \
     cd -; \
     :
 
