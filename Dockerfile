@@ -37,7 +37,8 @@ RUN set -euo pipefail && \
     cd -; \
     cd /tmp/zeppelin; \
     SPARK_XY_VERSION="$(echo "${SPARK_VERSION}" | cut -d '.' -f1,2 | tr -d '\n')"; \
-    HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
+    # Cannot use Hadoop 3 due to some nested dependency version mismatch issue
+    # HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
     # change_scala_version.sh seems deprecated, doesn't even support 2.12 as a param
     # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
     # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
@@ -45,7 +46,7 @@ RUN set -euo pipefail && \
     INTERPRETERS='!beam,!hbase,!pig,!jdbc,!file,!ignite,!kylin,!lens,!cassandra,!elasticsearch,!bigquery,!alluxio,!scio,!livy,!groovy,!sap,!java,!geode,!neo4j,!hazelcastjet,!submarine,!flink,!angular,!scalding'; \
     FLAGS="-DskipTests -Pbuild-distr"; \
     MODULES="-pl ${INTERPRETERS}"; \
-    PROFILES="-Pspark-${SPARK_XY_VERSION} -Pspark-scala-${SCALA_VERSION} -Phadoop${HADOOP_X_VERSION}"; \
+    PROFILES="-Pspark-${SPARK_XY_VERSION} -Pspark-scala-${SCALA_VERSION} -Phadoop2"; \
     mvn clean package ${FLAGS} ${MODULES} ${PROFILES}; \
     cd -; \
     :
