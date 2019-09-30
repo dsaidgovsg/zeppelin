@@ -44,7 +44,7 @@ RUN set -euo pipefail && \
     # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
     # Ignore -Pscala-${SCALA_VERSION} which is now no longer a valid flag
     # Ignore interpreters based on the official Travis configuration
-    INTERPRETERS="$(cat .travis.yml | grep INTERPRETERS= | grep -oE "'.+'")"; \
+    INTERPRETERS="$(cat .travis.yml | grep INTERPRETERS= | sed -E "s/- INTERPRETERS='(.+)'/\1/" | tr -d " ")"; \
     FLAGS="-DskipTests -Pbuild-distr"; \
     MODULES="-pl ${INTERPRETERS}"; \
     PROFILES="-Pspark-${SPARK_XY_VERSION} -Pspark-scala-${SCALA_VERSION} -Phadoop2"; \
