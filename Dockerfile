@@ -7,7 +7,7 @@ ARG PYTHON_VERSION="3.7"
 FROM maven:3-jdk-8-slim as builder
 SHELL ["/bin/bash", "-c"]
 
-ARG ZEPPELIN_REV="master"
+ARG ZEPPELIN_REV="v0.8.2"
 ARG ZEPPELIN_GIT_URL="https://github.com/apache/zeppelin.git"
 
 RUN set -euo pipefail && \
