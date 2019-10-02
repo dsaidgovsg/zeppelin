@@ -64,7 +64,7 @@ RUN set -euo pipefail && \
 
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
-ARG ZEPPELIN_REV="master"
+ARG ZEPPELIN_REV="v0.8.2"
 ENV ZEPPELIN_HOME "/zeppelin"
 
 # Usage of wildcard works, but be aware that only the files within zeppelin-**/zeppelin-**/ will be copied over
@@ -80,7 +80,9 @@ ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
 
 RUN set -euo pipefail && \
-    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
+    ZEPPELIN_NORMALIZED_GIT_URL="$(echo $ZEPPELIN_GIT_URL | sed -E 's/(.+?)(:?\.git)/\1/')"; \
+    ZEPPELIN_VERSION="$(wget -qO - "${ZEPPELIN_NORMALIZED_GIT_URL}/raw/${ZEPPELIN_REV}/pom.xml" | grep "<name>Zeppelin</name>" -B1 | grep "<version>" | grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-SNAPSHOT)?")"; \
+    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${ZEPPELIN_JAR_LOADER_VERSION}_${SCALA_VERSION}_zeppelin-${ZEPPELIN_VERSION}.jar; \
     :
 
 # Install custom OAuth authorizer with env domain checker
