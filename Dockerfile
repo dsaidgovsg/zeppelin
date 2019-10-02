@@ -78,13 +78,13 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 # Install JAR loader
 ARG SCALA_VERSION
 
-ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
+ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.2"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
 
 RUN set -euo pipefail && \
     ZEPPELIN_NORMALIZED_GIT_URL="$(echo $ZEPPELIN_GIT_URL | sed -E 's/(.+?)(:?\.git)/\1/')"; \
     ZEPPELIN_VERSION="$(wget -qO - "${ZEPPELIN_NORMALIZED_GIT_URL}/raw/${ZEPPELIN_REV}/pom.xml" | grep "<name>Zeppelin</name>" -B1 | grep "<version>" | grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-SNAPSHOT)?")"; \
-    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${ZEPPELIN_JAR_LOADER_VERSION}_${SCALA_VERSION}_zeppelin-${ZEPPELIN_VERSION}.jar; \
+    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}_${ZEPPELIN_JAR_LOADER_VERSION}_zeppelin-${ZEPPELIN_VERSION}.jar; \
     :
 
 # Install custom OAuth authorizer with env domain checker
