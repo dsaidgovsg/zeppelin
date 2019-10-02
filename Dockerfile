@@ -65,6 +65,8 @@ RUN set -euo pipefail && \
 FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
 
 ARG ZEPPELIN_REV="v0.8.2"
+ARG ZEPPELIN_GIT_URL="https://github.com/apache/zeppelin.git"
+
 ENV ZEPPELIN_HOME "/zeppelin"
 
 # Usage of wildcard works, but be aware that only the files within zeppelin-**/zeppelin-**/ will be copied over
