@@ -47,4 +47,5 @@ jobs:
         - 8080:8080
     runs-on: ubuntu-latest
     steps:
-    - name: bash -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
+    - name: Test for Zeppelin service availability
+      run: bash -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
