@@ -5,12 +5,10 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  release:   # For testing, do a release on v0.0.0 (then delete it)
-    types: [published]
 
 jobs:
   build:
-    strategy:
+    strategy: &matrix
       matrix:
         version:
         - zeppelin: "0.8.2"
@@ -18,35 +16,52 @@ jobs:
           scala:    "2.11"
           hadoop:   "3.1.0"
       fail-fast: true
+    env:
+      IMAGE_NAME: zeppelin
+      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Build Dockerfile and push into testing repository
-      uses: docker/build-push-action@v1
+    - name: Build Dockerfile
+      run: |-
+        docker build . -t "${IMAGE_NAME}:${IMAGE_TAG}" \
+          --build-args "ZEPPELIN_REV=v${{ matrix.version.zeppelin }}" \
+          --build-args "SPARK_VERSION=${{ matrix.version.spark }}" \
+          --build-args "SCALA_VERSION=${{ matrix.version.scala }}" \
+          --build-args "HADOOP_VERSION=${{ matrix.version.hadoop }}"
+    - name: Save built image as artifact
+      run: |-
+        mkdir -p artifacts
+        docker save "${IMAGE_NAME}:${IMAGE_TAG}" -o artifacts/image.tar
+    - name: Upload artifact for possible release
+      uses: actions/upload-artifact@v1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        repository: dsaidgovsg/zeppelin/zeppelin
-        tags: test_${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
-        build_args: ZEPPELIN_REV=v${{ matrix.version.zeppelin }},SPARK_VERSION=${{ matrix.version.spark }},SCALA_VERSION=${{ matrix.version.scala }},HADOOP_VERSION=${{ matrix.version.hadoop }}
+        name: image
+        path: artifacts/image.tar
+    - name: Test the built image
+      run: |-
+        docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${IMAGE_TAG}"
+        sleep 25
+        [ "`curl -s http://localhost:8080/api/version | jq -r .status`" = "OK" ]
+        docker rm -f zeppelin
       
-  test:
+  release:
     needs: [build]
-    strategy:
-      matrix:
-        version:
-        - zeppelin: "0.8.2"
-          spark:    "2.4.4"
-          scala:    "2.11"
-          hadoop:   "3.1.0"
-    services: 
-      zeppelin:
-        image: docker.pkg.github.com/dsaidgovsg/zeppelin/zeppelin:test_${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
-        ports:
-        - 8080:8080
+    strategy: *matrix
     runs-on: ubuntu-latest
     steps:
-    - name: Test for Zeppelin service availability
-      run: bash -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
+    - name: Download image artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: image
+    - name: Docker load built image
+      run: docker load -i artifacts/image.tar
+    - name: Push image for release
+      run: |-
+        echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+        docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    if: github.event_name == 'push'
