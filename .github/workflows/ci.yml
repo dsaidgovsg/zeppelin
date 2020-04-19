@@ -30,10 +30,6 @@ jobs:
           --build-arg "SPARK_VERSION=${{ matrix.version.spark }}" \
           --build-arg "SCALA_VERSION=${{ matrix.version.scala }}" \
           --build-arg "HADOOP_VERSION=${{ matrix.version.hadoop }}"
-    - name: Save built image as artifact
-      run: |-
-        mkdir -p artifacts
-        docker save "${IMAGE_NAME}:${IMAGE_TAG}" -o artifacts/image.tar
     - name: Test the built image
       run: |-
         docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${IMAGE_TAG}"
