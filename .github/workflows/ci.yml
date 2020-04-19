@@ -37,8 +37,8 @@ jobs:
     - name: Upload artifact for possible release
       uses: actions/upload-artifact@v1
       with:
-        name: image
-        path: artifacts/image.tar
+        name: artifacts
+        path: artifacts
     - name: Test the built image
       run: |-
         docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${IMAGE_TAG}"
@@ -60,7 +60,8 @@ jobs:
     - name: Download image artifact
       uses: actions/download-artifact@v1
       with:
-        name: image
+        name: artifacts
+        path: artifacts
     - name: Docker load built image
       run: docker load -i artifacts/image.tar
     - name: Push image for release
