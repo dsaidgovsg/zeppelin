@@ -55,6 +55,9 @@ jobs:
           spark:    "2.4.4"
           scala:    "2.11"
           hadoop:   "3.1.0"
+    env:
+      IMAGE_NAME: zeppelin
+      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
     - name: Download image artifact
