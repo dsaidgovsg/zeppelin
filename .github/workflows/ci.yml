@@ -26,10 +26,10 @@ jobs:
     - name: Build Dockerfile
       run: |-
         docker build . -t "${IMAGE_NAME}:${IMAGE_TAG}" \
-          --build-args "ZEPPELIN_REV=v${{ matrix.version.zeppelin }}" \
-          --build-args "SPARK_VERSION=${{ matrix.version.spark }}" \
-          --build-args "SCALA_VERSION=${{ matrix.version.scala }}" \
-          --build-args "HADOOP_VERSION=${{ matrix.version.hadoop }}"
+          --build-arg "ZEPPELIN_REV=v${{ matrix.version.zeppelin }}" \
+          --build-arg "SPARK_VERSION=${{ matrix.version.spark }}" \
+          --build-arg "SCALA_VERSION=${{ matrix.version.scala }}" \
+          --build-arg "HADOOP_VERSION=${{ matrix.version.hadoop }}"
     - name: Save built image as artifact
       run: |-
         mkdir -p artifacts
