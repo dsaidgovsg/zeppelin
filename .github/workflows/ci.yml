@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  release:   # For testing, do a release on v0.0.0 (then delete it)
+    types: [published]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        version:
+        - zeppelin: "0.8.2"
+          spark:    "2.4.4"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+      fail-fast: true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build Dockerfile and push into testing repository
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: docker.pkg.github.com/zeppelin
+        tags: test_${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
+        build_args: ZEPPELIN_REV=v${{ matrix.version.zeppelin }},SPARK_VERSION=${{ matrix.version.spark }},SCALA_VERSION=${{ matrix.version.scala }},HADOOP_VERSION=${{ matrix.version.hadoop }}
+      
+  test:
+    needs: [build]
+    strategy:
+      matrix:
+        version:
+        - zeppelin: "0.8.2"
+          spark:    "2.4.4"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+    services: 
+      zeppelin:
+        image: docker.pkg.github.com/zeppelin:test_${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
+        ports:
+        - 8080:8080
+    runs-on: ubuntu-latest
+    steps:
+    - name: bash -c 'sleep 25 && [ "`curl -s http://zeppelin:8080/api/version | jq -r .status`" = "OK" ]'
