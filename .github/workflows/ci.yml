@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        version:
+        - zeppelin: "0.8.2"
+          spark:    "2.4.4"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+      fail-fast: true
+    env:
+      IMAGE_NAME: zeppelin
+      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build Dockerfile
+      run: |-
+        docker build . -t "${IMAGE_NAME}:${IMAGE_TAG}" \
+          --build-arg "ZEPPELIN_REV=v${{ matrix.version.zeppelin }}" \
+          --build-arg "SPARK_VERSION=${{ matrix.version.spark }}" \
+          --build-arg "SCALA_VERSION=${{ matrix.version.scala }}" \
+          --build-arg "HADOOP_VERSION=${{ matrix.version.hadoop }}"
+    - name: Save built image as artifact
+      run: |-
+        mkdir -p artifacts
+        docker save "${IMAGE_NAME}:${IMAGE_TAG}" -o artifacts/image.tar
+    - name: Upload artifact for possible release
+      uses: actions/upload-artifact@v1
+      with:
+        name: artifacts
+        path: artifacts
+    - name: Test the built image
+      run: |-
+        docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${IMAGE_TAG}"
+        sleep 25
+        [ "`curl -s http://localhost:8080/api/version | jq -r .status`" = "OK" ]
+        docker rm -f zeppelin
+      
+  release:
+    needs: [build]
+    strategy:
+      matrix:
+        version:
+        - zeppelin: "0.8.2"
+          spark:    "2.4.4"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+    env:
+      IMAGE_NAME: zeppelin
+      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download image artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+        path: artifacts
+    - name: Docker load built image
+      run: docker load -i artifacts/image.tar
+    - name: Push image for release
+      run: |-
+        echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+        docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    if: github.event_name == 'push'
