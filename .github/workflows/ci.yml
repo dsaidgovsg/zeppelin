@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  build-and-release:
     strategy:
       matrix:
         version:
@@ -17,7 +17,7 @@ jobs:
           hadoop:   "3.1.0"
       fail-fast: true
     env:
-      IMAGE_NAME: zeppelin
+      IMAGE_NAME: dsaidgovsg/zeppelin
       IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
@@ -34,39 +34,12 @@ jobs:
       run: |-
         mkdir -p artifacts
         docker save "${IMAGE_NAME}:${IMAGE_TAG}" -o artifacts/image.tar
-    - name: Upload artifact for possible release
-      uses: actions/upload-artifact@v1
-      with:
-        name: artifacts
-        path: artifacts
     - name: Test the built image
       run: |-
         docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${IMAGE_TAG}"
         sleep 25
         [ "`curl -s http://localhost:8080/api/version | jq -r .status`" = "OK" ]
         docker rm -f zeppelin
-      
-  release:
-    needs: [build]
-    strategy:
-      matrix:
-        version:
-        - zeppelin: "0.8.2"
-          spark:    "2.4.4"
-          scala:    "2.11"
-          hadoop:   "3.1.0"
-    env:
-      IMAGE_NAME: zeppelin
-      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download image artifact
-      uses: actions/download-artifact@v1
-      with:
-        name: artifacts
-        path: artifacts
-    - name: Docker load built image
-      run: docker load -i artifacts/image.tar
     - name: Push image for release
       run: |-
         echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
@@ -74,4 +47,4 @@ jobs:
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    if: github.event_name == 'push'
+      if: github.event_name == 'push'
