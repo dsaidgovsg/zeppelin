@@ -28,8 +28,6 @@ RUN set -euo pipefail && \
 RUN adduser --disabled-password --gecos "" installer
 USER installer
 
-
-
 # Build from source and install from tar package
 RUN set -euo pipefail && \
     cd /tmp; \
@@ -77,10 +75,25 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 ARG ZEPPELIN_REV
 ARG SCALA_VERSION
 
+# Install GitHub Release Assets FUSE mount CLI (requires fuse install)
+ARG GHAFS_VERSION="v0.1.0"
+RUN set -euo pipefail && \
+    apk add --no-cache fuse; \
+    wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    mv ./ghafs /usr/local/bin/; \
+    ghafs --version; \
+    :
+
+# Install custom Zeppelin JAR loader, only applicable for v0.8.z and below
 ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 RUN set -euo pipefail && \
-    ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f1)"; \
-    ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f2)"; \
+    # We assume that the rev is with vX.Y.Z
+    # For other custom revs, they do not need the JAR loader, since we can assume that are for 0.9.z-SNAPSHOT and above anyway
+    ZEPPELIN_VERSION="${ZEPPELIN_REV:1}"; \
+    ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f1)"; \
+    ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f2)"; \
     # Only use the JAR loader for <= 0.8.z, since 0.9.z onwards already dropped support for it
     if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && [ "${ZEPPELIN_Y_VERSION}" -le 8 ]; then \
         wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
