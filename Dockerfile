@@ -78,21 +78,19 @@ ARG ZEPPELIN_REV
 ARG SCALA_VERSION
 
 ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
-ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-
-# Install custom OAuth authorizer with env domain checker
-# This is required even for general pac4j.oauth
-ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
-ENV PAC4J_AUTHORIZER_VERSION "${PAC4J_AUTHORIZER_VERSION}"
-
 RUN set -euo pipefail && \
     ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f1)"; \
     ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f2)"; \
     # Only use the JAR loader for <= 0.8.z, since 0.9.z onwards already dropped support for it
     if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && [ "${ZEPPELIN_Y_VERSION}" -le 8 ]; then \
-        wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar; \
+        wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
     fi; \
     :
+
+# Install custom OAuth authorizer with env domain checker
+# This is required even for general pac4j.oauth
+ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
+RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar
 
 RUN set -euo pipefail && \
     # Install gosu for non-root execution

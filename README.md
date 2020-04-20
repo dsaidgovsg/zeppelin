@@ -31,6 +31,10 @@ part of the above template files, but note that this is a best effort attempt
 and there is indeed a change of naming (or removal), this would not be reflected
 in the Docker image tags.
 
+## Version changelog
+
+See [`CHANGELOG.md`](CHANGELOG.md) for details.
+
 ## How to have a quick local deployment demo
 
 ```bash
