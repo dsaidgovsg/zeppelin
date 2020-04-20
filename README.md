@@ -1,8 +1,6 @@
 # Zeppelin
 
-| Scala 2.11 | Scala 2.12 |
-|:-:|:-:|
-| [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/dsaidgovsg%2Fzeppelin%2Fscala-2.11?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/scala-2.11/builds?repoOwner=dsaidgovsg&repoName=zeppelin&serviceName=dsaidgovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5d5e4cd6e32ac26b357d3034~scala-2.11) | [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/dsaidgovsg%2Fzeppelin%2Fscala-2.12?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/scala-2.12/builds?repoOwner=dsaidgovsg&repoName=zeppelin&serviceName=dsaidgovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5d773c683794ab51f4cbd16d~scala-2.12) |
+[![CI Status](https://img.shields.io/github/workflow/status/dsaidgovsg/zeppelin/ci/master?label=ci&logo=github&style=for-the-badge)](https://github.com/dsaidgovsg/zeppelin/actions)
 
 Zeppelin Dockerfile set-up with the following enhancements:
 
