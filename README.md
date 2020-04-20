@@ -1,8 +1,6 @@
 # Zeppelin
 
-| Scala 2.11 | Scala 2.12 |
-|:-:|:-:|
-| [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/dsaidgovsg%2Fzeppelin%2Fscala-2.11?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/scala-2.11/builds?repoOwner=dsaidgovsg&repoName=zeppelin&serviceName=dsaidgovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5d5e4cd6e32ac26b357d3034~scala-2.11) | [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/dsaid/dsaidgovsg%2Fzeppelin%2Fscala-2.12?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NWNhNDBjNDA1MTMxODZjZjdhMTUyYjQx.uEnKk6__Qzfhrurzdo57Oly3AhBgrjFWZZrovG-m-8E&type=cf-1)]( https://g.codefresh.io/pipelines/scala-2.12/builds?repoOwner=dsaidgovsg&repoName=zeppelin&serviceName=dsaidgovsg%2Fzeppelin&filter=trigger:build~Build;branch:master;pipeline:5d773c683794ab51f4cbd16d~scala-2.12) |
+[![CI Status](https://img.shields.io/github/workflow/status/dsaidgovsg/zeppelin/ci/master?label=ci&logo=github&style=for-the-badge)](https://github.com/dsaidgovsg/zeppelin/actions)
 
 Zeppelin Dockerfile set-up with the following enhancements:
 
@@ -64,7 +62,7 @@ sc.parallelize(0 to 10).sum
 Press `[SHIFT+ENTER]` to run the paragraph. Wait for Spark to compute the above
 and you should get the sum result after some time.
 
-## How to use the dynamic JAR loader
+## How to use the dynamic JAR loader (only for v0.8.z and below)
 
 By default, Zeppelin supports dynamic JAR loading, but only through Maven
 repository or local filesystem. See
@@ -75,8 +73,6 @@ This set-up enhances this capability by installing a special JAR to do loading
 from GitHub release JAR assets.
 
 ### Example
-
-Para #1
 
 ```scala
 %spark.dep
@@ -93,8 +89,20 @@ zepjarloader.github.Loader.loadJar(
     true)                       /* Optional param (true), true to read from local_file_path first (cache), false to always fetch from scratch */
 ```
 
-Para #2
-
 ```scala
 import com.puppycrawl.tools.checkstyle._
+```
+
+### Caveat
+
+This only applies to Zeppelin version 0.8.z and below, since 0.9.z drops support
+for it.
+
+One mitigation for this is to use a GitHub release asset as filesystem mount, as
+such: <https://github.com/guangie88/ghafs>. This should also work for 0.8.z. The
+way to use that is to add a first cell in notebook containing this:
+
+```jupyter
+%spark.conf
+spark.jars /path/to/your/mounted/release/asset.jar
 ```

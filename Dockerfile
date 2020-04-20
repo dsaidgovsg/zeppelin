@@ -1,13 +1,15 @@
 ARG SPARK_VERSION
 ARG SCALA_VERSION
 ARG HADOOP_VERSION
-# Python version doesn't matter much for Zeppelin, so we just default to latest
-ARG PYTHON_VERSION="3.7"
 
 FROM maven:3-jdk-8-slim as builder
 SHELL ["/bin/bash", "-c"]
 
-ARG ZEPPELIN_REV="v0.8.2"
+ARG ZEPPELIN_REV
+ARG SPARK_VERSION
+ARG SCALA_VERSION
+ARG HADOOP_VERSION
+
 ARG ZEPPELIN_GIT_URL="https://github.com/apache/zeppelin.git"
 
 RUN set -euo pipefail && \
@@ -26,9 +28,7 @@ RUN set -euo pipefail && \
 RUN adduser --disabled-password --gecos "" installer
 USER installer
 
-ARG SPARK_VERSION
-ARG SCALA_VERSION
-ARG HADOOP_VERSION
+
 
 # Build from source and install from tar package
 RUN set -euo pipefail && \
@@ -62,9 +62,9 @@ RUN set -euo pipefail && \
     cd -; \
     :
 
-FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-${PYTHON_VERSION}_hive_pyspark_alpine
+# Python version doesn't matter much for Zeppelin, so we just default to the latest 3.7
+FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7_hive_pyspark_alpine
 
-ARG ZEPPELIN_REV="master"
 ENV ZEPPELIN_HOME "/zeppelin"
 
 # Usage of wildcard works, but be aware that only the files within zeppelin-**/zeppelin-**/ will be copied over
@@ -74,14 +74,11 @@ WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 
 # Install JAR loader
+ARG ZEPPELIN_REV
 ARG SCALA_VERSION
 
 ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
 ENV ZEPPELIN_JAR_LOADER_VERSION "${ZEPPELIN_JAR_LOADER_VERSION}"
-
-RUN set -euo pipefail && \
-    wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
-    :
 
 # Install custom OAuth authorizer with env domain checker
 # This is required even for general pac4j.oauth
@@ -89,7 +86,12 @@ ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
 ENV PAC4J_AUTHORIZER_VERSION "${PAC4J_AUTHORIZER_VERSION}"
 
 RUN set -euo pipefail && \
-    wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar; \
+    ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f1)"; \
+    ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_REV}" | cut -d '.' -f2)"; \
+    # Only use the JAR loader for <= 0.8.z, since 0.9.z onwards already dropped support for it
+    if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && [ "${ZEPPELIN_Y_VERSION}" -le 8 ]; then \
+        wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar; \
+    fi; \
     :
 
 RUN set -euo pipefail && \
@@ -97,7 +99,7 @@ RUN set -euo pipefail && \
     apk add --no-cache su-exec; \
     ln -s /sbin/su-exec /usr/local/bin/gosu; \
     # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.2.1/tera_linux_amd64; \
+    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.0/tera_linux_amd64; \
     chmod +x tera_linux_amd64; \
     mv tera_linux_amd64 /usr/local/bin/tera; \
     :

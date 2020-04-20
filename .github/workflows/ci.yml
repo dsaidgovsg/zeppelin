@@ -11,16 +11,36 @@ jobs:
     strategy:
       matrix:
         version:
+        # 0.8.2 section
         - zeppelin: "0.8.2"
           spark:    "2.4.4"
           scala:    "2.11"
           hadoop:   "3.1.0"
+        # 0.9.0-preview1 section
+        - zeppelin: "0.9.0-preview1"
+          spark:    "2.4.4"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+        - zeppelin: "0.9.0-preview1"
+          spark:    "2.4.5"
+          scala:    "2.11"
+          hadoop:   "3.1.0"
+        - zeppelin: "0.9.0-preview1"
+          spark:    "2.4.4"
+          scala:    "2.12"
+          hadoop:   "3.1.0"
+        - zeppelin: "0.9.0-preview1"
+          spark:    "2.4.5"
+          scala:    "2.12"
+          hadoop:   "3.1.0"
       fail-fast: true
     env:
+      SELF_VERSION: v1
       IMAGE_NAME: dsaidgovsg/zeppelin
-      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
+    - name: Set IMAGE_TAG as env var export
+      run: echo "::set-env name=IMAGE_TAG::${SELF_VERSION}_zeppelin-${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}"
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Build Dockerfile
