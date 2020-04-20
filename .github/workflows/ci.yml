@@ -37,9 +37,10 @@ jobs:
     env:
       SELF_VERSION: v1
       IMAGE_NAME: dsaidgovsg/zeppelin
-      IMAGE_TAG: ${SELF_VERSION}_zeppelin-${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
+    - name: Set IMAGE_TAG as env var export
+      run: echo "::set-env name=IMAGE_TAG::${SELF_VERSION}_zeppelin-${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}"
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Build Dockerfile
