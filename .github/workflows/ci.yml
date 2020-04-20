@@ -35,8 +35,9 @@ jobs:
           hadoop:   "3.1.0"
       fail-fast: true
     env:
+      SELF_VERSION: v1
       IMAGE_NAME: dsaidgovsg/zeppelin
-      IMAGE_TAG: ${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
+      IMAGE_TAG: ${SELF_VERSION}_zeppelin-${{ matrix.version.zeppelin }}_spark-${{ matrix.version.spark }}_scala-${{ matrix.version.scala }}_hadoop-${{ matrix.version.hadoop }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
