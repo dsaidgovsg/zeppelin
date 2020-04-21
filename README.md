@@ -38,11 +38,14 @@ See [`CHANGELOG.md`](CHANGELOG.md) for details.
 ## How to have a quick local deployment demo
 
 ```bash
-SPARK_VERSION="2.4.4"
+# Can use any of the tags in zeppelin repo that follows semver. E.g. v0.8.2, v0.9.0-preview1
+ZEPPELIN_REV="v0.9.0-preview1"
+SPARK_VERSION="2.4.5"
 SCALA_VERSION="2.12"
 HADOOP_VERSION="3.1.0"
 
 docker build . -t zeppelin \
+    --build-arg ZEPPELIN_REV="${ZEPPELIN_REV}" \
     --build-arg SPARK_VERSION="${SPARK_VERSION}" \
     --build-arg SCALA_VERSION="${SCALA_VERSION}" \
     --build-arg HADOOP_VERSION="${HADOOP_VERSION}"
