@@ -32,5 +32,8 @@ port value.
     - `ZEPPELIN_NOTEBOOK` notebook dir location as stated in `General`
 
 - Others
-  - `zeppelin-jar-loader` (only for `0.8.z` and below) and `pac4j-authorizer`
-    JARs are present for use as described in [`README.md`](README.md)
+  - `zeppelin-jar-loader v0.2.1"` (only for Zeppelin `0.8.1` and below) and
+    `pac4j-authorizer v0.1.1` JARs are present for use as described in
+    [`README.md`](README.md).
+  - `ghafs v0.1.0` executable is present in `PATH`, check
+    <https://github.com/guangie88/ghafs> for more details.

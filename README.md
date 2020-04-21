@@ -66,7 +66,7 @@ sc.parallelize(0 to 10).sum
 Press `[SHIFT+ENTER]` to run the paragraph. Wait for Spark to compute the above
 and you should get the sum result after some time.
 
-## How to use the dynamic JAR loader (only for v0.8.z and below)
+## How to use the dynamic JAR loader (only for v0.8.1 and below)
 
 By default, Zeppelin supports dynamic JAR loading, but only through Maven
 repository or local filesystem. See
@@ -99,8 +99,8 @@ import com.puppycrawl.tools.checkstyle._
 
 ### Caveat
 
-This only applies to Zeppelin version 0.8.z and below, since 0.9.z drops support
-for it.
+This only applies to Zeppelin version 0.8.1 and below, since 0.8.2 and 0.9.z
+drops support for it.
 
 One mitigation for this is to use a GitHub release asset as filesystem mount, as
 such: <https://github.com/guangie88/ghafs>. This should also work for 0.8.z. The

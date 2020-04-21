@@ -94,8 +94,9 @@ RUN set -euo pipefail && \
     ZEPPELIN_VERSION="${ZEPPELIN_REV:1}"; \
     ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f1)"; \
     ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f2)"; \
-    # Only use the JAR loader for <= 0.8.z, since 0.9.z onwards already dropped support for it
-    if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && [ "${ZEPPELIN_Y_VERSION}" -le 8 ]; then \
+    ZEPPELIN_Z_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f3)"; \
+    # Only use the JAR loader for <= 0.8.1, since 0.8.2 onwards already dropped support for it
+    if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && ([ "${ZEPPELIN_Y_VERSION}" -le 8 ] && [ "${ZEPPELIN_Z_VERSION}" -le 1 ] || [ "${ZEPPELIN_Y_VERSION}" -le 7 ]); then \
         wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
     fi; \
     :
