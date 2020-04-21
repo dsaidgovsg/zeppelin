@@ -440,7 +440,7 @@
   <description>Enable directory listings on server.</description>
 </property>
 
-{%- if c.USE_INTERPRETER_LIFECYCLEMANAGER and c.USE_INTERPRETER_LIFECYCLEMANAGER == 'true' %}
+{%- if USE_INTERPRETER_LIFECYCLEMANAGER and USE_INTERPRETER_LIFECYCLEMANAGER == 'true' %}
 
 <property>
   <name>{{ INTERPRETER_LIFECYCLEMANAGER_CLASS | default(value='zeppelin.interpreter.lifecyclemanager.class') }}</name>
