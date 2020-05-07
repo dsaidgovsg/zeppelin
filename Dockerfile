@@ -76,7 +76,7 @@ ARG ZEPPELIN_REV
 ARG SCALA_VERSION
 
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
-ARG GHAFS_VERSION="v0.1.0"
+ARG GHAFS_VERSION="v0.1.1"
 RUN set -euo pipefail && \
     apk add --no-cache fuse; \
     wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
