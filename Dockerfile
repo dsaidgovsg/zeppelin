@@ -61,7 +61,7 @@ RUN set -euo pipefail && \
     :
 
 # Python version doesn't matter much for Zeppelin, so we just default to the latest 3.7
-FROM guangie88/spark-custom-addons:${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7_hive_pyspark_alpine
+FROM guangie88/spark-custom-addons:v2_${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7_hive_pyspark_alpine
 
 ENV ZEPPELIN_HOME "/zeppelin"
 
