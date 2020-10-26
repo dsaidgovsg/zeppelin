@@ -111,7 +111,7 @@ RUN set -euo pipefail && \
 
 COPY docker ${ZEPPELIN_HOME}
 
-RUN adduser -D zeppelin
+RUN adduser --disabled-password --gecos "" zeppelin
 
 ENV ZEPPELIN_IMPERSONATE_USER zeppelin
 ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
