@@ -61,7 +61,7 @@ RUN set -euo pipefail && \
     :
 
 # Python version doesn't matter much for Zeppelin, so we just default to the latest 3.7
-FROM guangie88/spark-k8s-addons:v4_${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7
+FROM dsaidgovsg/spark-k8s-addons:v4_${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_python-3.7
 USER root
 
 ENV ZEPPELIN_HOME "/zeppelin"
