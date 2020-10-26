@@ -24,7 +24,7 @@ RUN set -euo pipefail && \
     rm -rf /var/lib/apt/lists/*; \
     :
 
-# bower install step in zeppelin-web cannot be easily done as root user
+# bower install step in zeppelin-web cannot be easily done as root userc
 RUN adduser --disabled-password --gecos "" installer
 USER installer
 
@@ -61,7 +61,8 @@ RUN set -euo pipefail && \
     :
 
 # Python version doesn't matter much for Zeppelin, so we just default to the latest 3.7
-FROM guangie88/spark-custom-addons:v2_${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7_hive_pyspark_alpine
+FROM guangie88/spark-k8s-addons:v4_${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}_python-3.7
+USER root
 
 ENV ZEPPELIN_HOME "/zeppelin"
 
@@ -75,30 +76,24 @@ ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
 ARG ZEPPELIN_REV
 ARG SCALA_VERSION
 
+# Install required apt packages
+RUN set -euo pipefail && \
+    apt-get update && apt-get install --no-install-recommends \
+        fuse \
+        gosu \
+        wget \
+        ; \
+    rm -rf /var/lib/apt/lists/*; \
+    :
+
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
 ARG GHAFS_VERSION="v0.1.2"
 RUN set -euo pipefail && \
-    apk add --no-cache fuse; \
     wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
     tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
     rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
     mv ./ghafs /usr/local/bin/; \
     ghafs --version; \
-    :
-
-# Install custom Zeppelin JAR loader, only applicable for v0.8.z and below
-ARG ZEPPELIN_JAR_LOADER_VERSION="v0.2.1"
-RUN set -euo pipefail && \
-    # We assume that the rev is with vX.Y.Z
-    # For other custom revs, they do not need the JAR loader, since we can assume that are for 0.9.z-SNAPSHOT and above anyway
-    ZEPPELIN_VERSION="${ZEPPELIN_REV:1}"; \
-    ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f1)"; \
-    ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f2)"; \
-    ZEPPELIN_Z_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f3)"; \
-    # Only use the JAR loader for <= 0.8.1, since 0.8.2 onwards already dropped support for it
-    if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && ([ "${ZEPPELIN_Y_VERSION}" -le 8 ] && [ "${ZEPPELIN_Z_VERSION}" -le 1 ] || [ "${ZEPPELIN_Y_VERSION}" -le 7 ]); then \
-        wget -P ${SPARK_HOME}/jars/ https://github.com/dsaidgovsg/zeppelin-jar-loader/releases/download/${ZEPPELIN_JAR_LOADER_VERSION}/zeppelin-jar-loader_${SCALA_VERSION}-${ZEPPELIN_JAR_LOADER_VERSION}.jar; \
-    fi; \
     :
 
 # Install custom OAuth authorizer with env domain checker
@@ -107,11 +102,8 @@ ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
 RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar
 
 RUN set -euo pipefail && \
-    # Install gosu for non-root execution
-    apk add --no-cache su-exec; \
-    ln -s /sbin/su-exec /usr/local/bin/gosu; \
     # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.0/tera_linux_amd64; \
+    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera_linux_amd64; \
     chmod +x tera_linux_amd64; \
     mv tera_linux_amd64 /usr/local/bin/tera; \
     :
@@ -125,4 +117,4 @@ ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
 ENV ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER false
 
 # Env var not expanded without Dockerfile, so need to go through sh
-CMD ["sh", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
+CMD ["bash", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]

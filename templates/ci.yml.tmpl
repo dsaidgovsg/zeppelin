@@ -1,0 +1,80 @@
+name: ci
+
+on:
+  push:
+    branches:
+    - master
+    - v*
+  pull_request:
+    branches:
+    - master
+    - v*
+
+jobs:
+  build-and-release:
+    strategy:
+      matrix:
+        version:
+{%- for v in versions %}
+{%- for zeppelin in v.zeppelin %}
+{%- for spark in v.spark %}
+{%- for hadoop in v.hadoop %}
+{%- for scala in v.scala %}
+        - zeppelin: "{{ zeppelin }}"
+          spark:    "{{ spark }}"
+          hadoop:   "{{ hadoop }}"
+          scala:    "{{ scala }}"
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+      fail-fast: true
+    runs-on: ubuntu-latest
+    env:
+      SELF_VERSION: "{{ self_version }}"
+      IMAGE_NAME: zeppelin
+      {% raw -%}
+      ZEPPELIN_VERSION: "${{ matrix.version.zeppelin }}"
+      SPARK_VERSION:    "${{ matrix.version.spark }}"
+      SCALA_VERSION:    "${{ matrix.version.scala }}"
+      HADOOP_VERSION:   "${{ matrix.version.hadoop }}"
+      {%- endraw %}
+    steps:
+    - name: Set TAG_NAME as env var export
+      run: echo "::set-env name=TAG_NAME::${SELF_VERSION}_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install tera-cli
+      run: |-
+        wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz
+        tar xvf tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz
+        mv tera-cli-v0.4.1-x86_64-unknown-linux-musl/tera /tmp/tera
+        rm -rf tera-cli-v0.4.1-x86_64-unknown-linux-musl*
+    - name: Check differences between ci.yml and ci.yml.tmpl
+      run: |-
+        cp .github/workflows/ci.yml .github/workflows/ci.yml.backup
+        TERA=/tmp/tera ./templates/apply-vars.sh
+        if ! diff .github/workflows/ci.yml .github/workflows/ci.yml.backup; then echo "ci.yml.tmpl and ci.yml differs!" && exit 1; fi
+    - name: Build Dockerfile
+      run: |-
+        docker build . -t "${IMAGE_NAME}:${TAG_NAME}" \
+          --build-arg "ZEPPELIN_REV=v${ZEPPELIN_VERSION}" \
+          --build-arg "SPARK_VERSION=${SPARK_VERSION}" \
+          --build-arg "SCALA_VERSION=${SCALA_VERSION}" \
+          --build-arg "HADOOP_VERSION=${HADOOP_VERSION}"
+    - name: Test the built image
+      run: |-
+        docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${TAG_NAME}"
+        sleep 25
+        [ "`curl -s http://localhost:8080/api/version | jq -r .status`" = "OK" ]
+        docker rm -f zeppelin
+    - name: Push Docker image
+      run: bash push-images.sh
+      env:
+        {% raw -%}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        IMAGE_ORG: ${{ secrets.IMAGE_ORG }}
+        {%- endraw %}
+      if: github.event_name == 'push'
