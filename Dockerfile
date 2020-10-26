@@ -103,9 +103,10 @@ RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer
 
 RUN set -euo pipefail && \
     # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera_linux_amd64; \
-    chmod +x tera_linux_amd64; \
-    mv tera_linux_amd64 /usr/local/bin/tera; \
+    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
+    tar xvf tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
+    mv tera-cli-v0.4.1-x86_64-unknown-linux-musl/tera /usr/local/bin/tera; \
+    rm -rf tera-cli-v0.4.1-x86_64-unknown-linux-musl*; \
     :
 
 COPY docker ${ZEPPELIN_HOME}
