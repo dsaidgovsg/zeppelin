@@ -78,7 +78,7 @@ ARG SCALA_VERSION
 
 # Install required apt packages
 RUN set -euo pipefail && \
-    apt-get update && apt-get install --no-install-recommends \
+    apt-get update && apt-get install -y --no-install-recommends \
         fuse \
         gosu \
         wget \
