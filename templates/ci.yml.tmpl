@@ -15,91 +15,31 @@ jobs:
     strategy:
       matrix:
         version:
-        - zeppelin: "0.8.2"
-          spark:    "2.4.5"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.8.2"
-          spark:    "2.4.6"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.8.2"
-          spark:    "2.4.7"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.5"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.5"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.6"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.6"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.7"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "2.4.7"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.5"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.5"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.6"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.6"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.7"
-          hadoop:   "3.1.0"
-          scala:    "2.11"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "2.4.7"
-          hadoop:   "3.1.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "3.0.0"
-          hadoop:   "3.2.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview1"
-          spark:    "3.0.1"
-          hadoop:   "3.2.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "3.0.0"
-          hadoop:   "3.2.0"
-          scala:    "2.12"
-        - zeppelin: "0.9.0-preview2"
-          spark:    "3.0.1"
-          hadoop:   "3.2.0"
-          scala:    "2.12"
+{%- for v in versions %}
+{%- for zeppelin in v.zeppelin %}
+{%- for spark in v.spark %}
+{%- for hadoop in v.hadoop %}
+{%- for scala in v.scala %}
+        - zeppelin: "{{ zeppelin }}"
+          spark:    "{{ spark }}"
+          hadoop:   "{{ hadoop }}"
+          scala:    "{{ scala }}"
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
       fail-fast: true
     runs-on: ubuntu-latest
     env:
-      SELF_VERSION: "v2"
+      SELF_VERSION: "{{ self_version }}"
       IMAGE_NAME: zeppelin
+      {% raw -%}
       ZEPPELIN_VERSION: "${{ matrix.version.zeppelin }}"
       SPARK_VERSION:    "${{ matrix.version.spark }}"
       SCALA_VERSION:    "${{ matrix.version.scala }}"
       HADOOP_VERSION:   "${{ matrix.version.hadoop }}"
+      {%- endraw %}
     steps:
     - name: Set TAG_NAME as env var export
       run: echo "::set-env name=TAG_NAME::${SELF_VERSION}_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
@@ -132,7 +72,9 @@ jobs:
     - name: Push Docker image
       run: bash push-images.sh
       env:
+        {% raw -%}
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         IMAGE_ORG: ${{ secrets.IMAGE_ORG }}
+        {%- endraw %}
       if: github.event_name == 'push'

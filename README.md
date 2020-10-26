@@ -2,11 +2,8 @@
 
 [![CI Status](https://img.shields.io/github/workflow/status/dsaidgovsg/zeppelin/ci/master?label=ci&logo=github&style=for-the-badge)](https://github.com/dsaidgovsg/zeppelin/actions)
 
-Zeppelin Dockerfile set-up with the following enhancements:
+Zeppelin Dockerfile set-up with the following enhancement(s):
 
-- Dynamic GitHub releases JAR loader. See
-  [here](#how-to-use-the-dynamic-JAR-loader) for how to use. Original repo is in
-  [here](https://github.com/dsaidgovsg/zeppelin-jar-loader).
 - `pac4j` additional environment variable based email domain authorization.
   See original repo [here](https://github.com/dsaidgovsg/pac4j-authorizer) for
   more details.
@@ -38,11 +35,11 @@ See [`CHANGELOG.md`](CHANGELOG.md) for details.
 ## How to have a quick local deployment demo
 
 ```bash
-# Can use any of the tags in zeppelin repo that follows semver. E.g. v0.8.2, v0.9.0-preview1
-ZEPPELIN_REV="v0.9.0-preview1"
-SPARK_VERSION="2.4.5"
+# Can use any of the tags in zeppelin repo that follows semver. E.g. v0.8.2
+ZEPPELIN_REV="v0.9.0-preview2"
+SPARK_VERSION="3.0.1"
 SCALA_VERSION="2.12"
-HADOOP_VERSION="3.1.0"
+HADOOP_VERSION="3.2.0"
 
 docker build . -t zeppelin \
     --build-arg ZEPPELIN_REV="${ZEPPELIN_REV}" \
@@ -69,45 +66,12 @@ sc.parallelize(0 to 10).sum
 Press `[SHIFT+ENTER]` to run the paragraph. Wait for Spark to compute the above
 and you should get the sum result after some time.
 
-## How to use the dynamic JAR loader (only for v0.8.1 and below)
+## GHAFS and dynamic JAR loading
 
-By default, Zeppelin supports dynamic JAR loading, but only through Maven
-repository or local filesystem. See
-[this](https://zeppelin.apache.org/docs/latest/interpreter/spark.html#3-dynamic-dependency-loading-via-sparkdep-interpreter)
-for more details.
-
-This set-up enhances this capability by installing a special JAR to do loading
-from GitHub release JAR assets.
-
-### Example
-
-```scala
-%spark.dep
-z.reset() /* z is an implicit value of type org.apache.zeppelin.spark.dep.SparkDependencyContext */
-
-// Saves JAR asset from GitHub release into local filesystem and loads JAR
-zepjarloader.github.Loader.loadJar(
-    z,
-    "checkstyle/checkstyle",    /* github_owner/repo_name */
-    "checkstyle-8.21",          /* tag_name */
-    "checkstyle-8.21-all.jar",  /* asset_name */
-    None,                       /* Some(sys.env.get("GITHUB_API_TOKEN").get) if private repo, None if no token needed */
-    "/tmp/",                    /* local_file_dir_or_path to save into */
-    true)                       /* Optional param (true), true to read from local_file_path first (cache), false to always fetch from scratch */
-```
-
-```scala
-import com.puppycrawl.tools.checkstyle._
-```
-
-### Caveat
-
-This only applies to Zeppelin version 0.8.1 and below, since 0.8.2 and 0.9.z
-drops support for it.
-
-One mitigation for this is to use a GitHub release asset as filesystem mount, as
-such: <https://github.com/guangie88/ghafs>. This should also work for 0.8.z. The
-way to use that is to add a first cell in notebook containing this:
+[`ghafs`](https://github.com/guangie88/ghafs) is provided to allow JAR files in
+GitHub releases to be directly accessible for dynamic JAR loading. Use the CLI
+to mount any release that contains JAR file onto some path, then in any notebook
+run the first cell like the following:
 
 ```jupyter
 %spark.conf
