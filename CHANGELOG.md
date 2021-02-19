@@ -6,8 +6,19 @@ In principle, new features can be added to an existing version, but the change
 should not be breaking to existing default `docker run` with default env vars
 set-up.
 
-## v2
+## v2.1.0
 
+- Allow application of existing template to be optional:
+  - `ZEPPELIN_APPLY_INTERPRETER_JSON`, set to `false` to disable
+    applying `interpreter.json.template`.
+  - `ZEPPELIN_APPLY_ZEPPELIN_SITE`, set to `false` to disable applying
+    `zeppelin-site.xml.template`.
+  - `ZEPPELIN_APPLY_SHIRO`, set to `false` to disable applying
+    `shiro.ini.template`.
+
+## v2.0.0
+
+- Allow
 - Use Kubernetes supported Spark image.
 - Change from Alpine to Debian because of Kubernetes support.
 - Drops `zeppelin-jar-loader`.

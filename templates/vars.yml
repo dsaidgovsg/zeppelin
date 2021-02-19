@@ -1,4 +1,4 @@
-self_version: "v2"
+self_version: "v2.1.0"
 
 versions:
 - zeppelin: ["0.8.2"]
