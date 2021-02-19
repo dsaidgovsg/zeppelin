@@ -31,9 +31,10 @@ USER installer
 # Build from source and install from tar package
 RUN set -euo pipefail && \
     cd /tmp; \
-    git clone ${ZEPPELIN_GIT_URL} -b ${ZEPPELIN_REV}; \
+    git clone ${ZEPPELIN_GIT_URL}; \
     cd -; \
     cd /tmp/zeppelin; \
+    git checkout ${ZEPPELIN_REV}; \
     SPARK_XY_VERSION="$(echo "${SPARK_VERSION}" | cut -d '.' -f1,2 | tr -d '\n')"; \
     # The name of zeppelin directory might not be the same as the ZEPPELIN_REV, especially when building "master" where the directory might be "zeppelin-0.9.0-SNAPSHOT"
     # Below can get the actual Zeppelin version, but can only be done within Docker RUN commands
@@ -87,7 +88,7 @@ RUN set -euo pipefail && \
     :
 
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
-ARG GHAFS_VERSION="v0.1.2"
+ARG GHAFS_VERSION="v0.1.3"
 RUN set -euo pipefail && \
     wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
     tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
