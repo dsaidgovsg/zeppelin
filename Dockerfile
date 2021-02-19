@@ -87,7 +87,7 @@ RUN set -euo pipefail && \
     :
 
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
-ARG GHAFS_VERSION="v0.1.2"
+ARG GHAFS_VERSION="v0.1.3"
 RUN set -euo pipefail && \
     wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
     tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
