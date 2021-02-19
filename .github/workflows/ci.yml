@@ -70,7 +70,9 @@ jobs:
       HADOOP_VERSION:   "${{ matrix.version.hadoop }}"
     steps:
     - name: Set TAG_NAME as env var export
-      run: echo "::set-env name=TAG_NAME::${SELF_VERSION}_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+      run: |-
+        TAG_NAME="${SELF_VERSION}_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+        echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Install tera-cli
