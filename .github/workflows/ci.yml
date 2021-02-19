@@ -73,7 +73,7 @@ jobs:
       fail-fast: true
     runs-on: ubuntu-latest
     env:
-      SELF_VERSION: "v2"
+      SELF_VERSION: "v2.1.0"
       IMAGE_NAME: zeppelin
       ZEPPELIN_VERSION: "${{ matrix.version.zeppelin }}"
       ZEPPELIN_REV:     "${{ matrix.version.zeppelin_rev }}"
@@ -83,8 +83,18 @@ jobs:
     steps:
     - name: Set TAG_NAME as env var export
       run: |-
-        TAG_NAME="${SELF_VERSION}_${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+        SUFFIX_TAG="${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+
+        TAG_NAME="${SELF_VERSION}_${SUFFIX_TAG}"
         echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
+        SELF_X_VERSION="$(echo ${SELF_VERSION} | cut -d . -f 1)"
+        X_TAG_NAME="${SELF_X_VERSION}_${SUFFIX_TAG}"
+        echo "X_TAG_NAME=${X_TAG_NAME}" >> $GITHUB_ENV
+
+        SELF_XY_VERSION="$(echo ${SELF_VERSION} | cut -d . -f 1,2)"
+        XY_TAG_NAME="${SELF_XY_VERSION}_${SUFFIX_TAG}"
+        echo "XY_TAG_NAME=${XY_TAG_NAME}" >> $GITHUB_ENV
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Install tera-cli
