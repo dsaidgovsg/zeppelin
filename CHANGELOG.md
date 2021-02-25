@@ -6,6 +6,28 @@ In principle, new features can be added to an existing version, but the change
 should not be breaking to existing default `docker run` with default env vars
 set-up.
 
+## v3.0.0
+
+- Change default behaviour of not supplying the following Spark env vars (all of
+  them from previous version). No values will be used instead, leaving it to use
+  `spark-defaults.conf` if you have.
+  - `SPARK_MASTER`
+  - `SPARK_JARS`
+  - `SPARK_SUBMIT_DEPLOYMODE`
+  - `SPARK_APP_NAME`
+  - `SPARK_ARGS`
+  - `SPARK_EXECUTOR_MEMORY`
+  - `SPARK_EVENTLOG_ENABLED`
+  - `SPARK_EVENTLOG_DIR`
+  - `SPARK_CORES_MAX`
+  - `SPARK_SHUFFLE_SERVICE_ENABLED`
+  - `SPARK_DYNAMICALLOCATION_ENABLED`
+  - `SPARK_DYNAMICALLOCATION_MAXEXECUTORS`
+  - `SPARK_DYNAMICALLOCATION_CACHEDEXECUTORIDLETIMEOUT`
+- Change the following env var names:
+  - `SPARK_INTERPRETER_PER_NOTE` to `ZEPPELIN_SPARK_INTERPRETER_PER_NOTE`
+  - `SPARK_INTERPRETER_PER_USER` to `ZEPPELIN_SPARK_INTERPRETER_PER_USER`
+
 ## v2.1.0
 
 - Allow application of existing template to be optional:
@@ -18,7 +40,6 @@ set-up.
 
 ## v2.0.0
 
-- Allow
 - Use Kubernetes supported Spark image.
 - Change from Alpine to Debian because of Kubernetes support.
 - Drops `zeppelin-jar-loader`.
