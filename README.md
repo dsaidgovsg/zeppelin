@@ -36,16 +36,18 @@ See [`CHANGELOG.md`](CHANGELOG.md) for details.
 
 ```bash
 # Can use any of the tags in zeppelin repo that follows semver. E.g. v0.8.2
-ZEPPELIN_REV="v0.9.0-preview2"
-SPARK_VERSION="3.0.1"
-SCALA_VERSION="2.12"
-HADOOP_VERSION="3.2.0"
+ZEPPELIN_VERSION="0.10.1"
+SPARK_VERSION="3.2.1"
+HADOOP_VERSION="3.3.1"
+SCALA_VERSION="2.13"
+JAVA_VERSION="8"
 
 docker build . -t zeppelin \
-    --build-arg ZEPPELIN_REV="${ZEPPELIN_REV}" \
+    --build-arg ZEPPELIN_VERSION="${ZEPPELIN_VERSION}" \
     --build-arg SPARK_VERSION="${SPARK_VERSION}" \
+    --build-arg HADOOP_VERSION="${HADOOP_VERSION}" \
     --build-arg SCALA_VERSION="${SCALA_VERSION}" \
-    --build-arg HADOOP_VERSION="${HADOOP_VERSION}"
+    --build-arg JAVA_VERSION="${JAVA_VERSION}"
 
 docker run --rm -it --name zeppelin -p 8080:8080 zeppelin
 ```
@@ -77,3 +79,61 @@ run the first cell like the following:
 %spark.conf
 spark.jars /path/to/your/mounted/release/asset.jar
 ```
+
+## Running a quick docker-compose set-up with GitHub OAuth 2.0
+
+Assuming you have a sufficiently modern `docker-compose` and `docker` CLI
+set-up, you can go to [`examples/github`](examples/github).
+
+You will need to go to any GitHub account that you can go into the following:
+
+(Top-right) `Settings` > `Developer settings` > `OAuth Apps`, and click on `New
+OAuth App`
+
+You can add a new OAuth 2.0 application with a new client id and secret.
+
+Copy the two values into [`shiro.ini`](examples/github/shiro.ini), under
+`oauth2Config.key` and `oauth2Config.secret`.
+
+Now run `docker-compose up --build`, and you should get a working Zeppelin
+set-up at port 8080. Using your web browser to navigate to it, should redirect
+you to login (and accept scopes) in GitHub, and then redirecting you back to the
+localhost Zeppelin authenticated.
+
+## Caveat
+
+### Java 11
+
+The build matrix does not build specifically for Java 11, because officially
+Zeppelin is only tested and built with Java 8:
+<https://zeppelin.apache.org/docs/latest/quickstart/install.html#requirements>
+
+However it has been somewhat empirically tested that the set-up can run on Java
+11, with some error logs during start-up that do not seem to cause any major
+issues, related to `org.glassfish.jersey.message.internal.DataSourceProvider`.
+
+```log
+java.lang.NoClassDefFoundError: javax/activation/DataSource
+```
+
+### Scala 2.13
+
+While the latest commit of Zeppelin has already started supporting Spark 2.13,
+since
+<https://github.com/apache/zeppelin/commit/c4c580a37fde649553d336984a94bcb1b2821201>
+the build matrix also does not build specifically for Scala 2.13, since the
+released version v0.10.1 does not Spark 2.13.
+
+### Spark 3.3.0
+
+While current the build matrix here builds for Spark 3.3.0, the current latest
+released version v0.10.1 of Zeppelin still does not support it, even though
+there is already a commit for it:
+<https://github.com/apache/zeppelin/pull/4388>.
+
+But since there is workaround for it, this build matrix supports it.
+
+As such, if you are running the built image with Spark 3.3.0, you need to set
+environment variable `ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK` to `false`, so
+the the value `zeppelin.spark.enableSupportedVersionCheck` in `interpreter.json`
+is set to `false` to prevent checking of unsupported Spark version.

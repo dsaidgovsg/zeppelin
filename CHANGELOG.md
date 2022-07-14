@@ -6,6 +6,20 @@ In principle, new features can be added to an existing version, but the change
 should not be breaking to existing default `docker run` with default env vars
 set-up.
 
+## v4
+
+- No longer self-compilation of Zeppelin from source code since it hardly works,
+  using pre-built binary `zeppelin-x.y.z-bin-netinst.tgz`.
+- No longer use fat jar from <https://github.com/dsaidgovsg/pac4j-authorizer>,
+  and instead place the latest working `buji-pac4j` and `pac4j-oauth` (and
+  their deps JARs) into `${ZEPPELIN_HOME}/lib`.
+- Drop all `_IMPERSONATE_` env vars since they do not work properly in Zeppelin
+  0.10.z:
+  - `ZEPPELIN_IMPERSONATE_USER`
+  - `ZEPPELIN_IMPERSONATE_CMD`
+  - `ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER`
+- Drop minor.patch versions in self-version.
+
 ## v3.0.0
 
 - Change default behaviour of not supplying the following Spark env vars (all of

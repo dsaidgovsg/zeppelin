@@ -1,24 +1,20 @@
-self_version: "v3.0.0"
+self_version: "v4"
 
 versions:
-- zeppelin: ["0.8.2"]
-  spark:    ["2.4.5", "2.4.6", "2.4.7"]
-  scala:    ["2.11"]
-  hadoop:   ["3.1.0"]
-
-- zeppelin: ["0.9.0-preview1", "0.9.0-preview2", "0.9.0"]
-  spark:    ["2.4.5", "2.4.6", "2.4.7"]
-  scala:    ["2.11", "2.12"]
-  hadoop:   ["3.1.0"]
-
-- zeppelin: ["0.9.0-preview1", "0.9.0-preview2", "0.9.0"]
-  spark:    ["3.0.0", "3.0.1"]
+- zeppelin: ["0.10.1"]
+  spark:    ["3.1.3"]
+  java:     ["8"]
   scala:    ["2.12"]
   hadoop:   ["3.2.0"]
 
-# Zeppelin tagging system is screwed up, better do a manual mapping
-mappings:
-  "0.9.0": "9b839b5ae"
-  "0.9.0-preview2": "fe8fe9be7"
-  "0.9.0-preview1": "9826e8249"
-  "0.8.2": "v0.8.2"
+- zeppelin: ["0.10.1"]
+  spark:    ["3.2.1"]
+  java:     ["8"]
+  scala:    ["2.12"]
+  hadoop:   ["3.3.1"]
+
+- zeppelin: ["0.10.1"]
+  spark:    ["3.3.0"]
+  java:     ["8"]
+  scala:    ["2.12"]
+  hadoop:   ["3.3.2"]

@@ -1,81 +1,16 @@
-ARG SPARK_VERSION
-ARG SCALA_VERSION
-ARG HADOOP_VERSION
+ARG SPARK_VERSION="3.2.1"
+ARG HADOOP_VERSION="3.3.1"
+ARG SCALA_VERSION="2.12"
+ARG JAVA_VERSION="8"
 
-FROM maven:3-jdk-8-slim as builder
-SHELL ["/bin/bash", "-c"]
-
-ARG ZEPPELIN_REV
-ARG SPARK_VERSION
-ARG SCALA_VERSION
-ARG HADOOP_VERSION
-
-ARG ZEPPELIN_GIT_URL="https://github.com/apache/zeppelin.git"
-
-RUN set -euo pipefail && \
-    apt-get update && apt-get install -y --no-install-recommends \
-        bzip2 \
-        curl \
-        git \
-        ; \
-    # Force Node 8.x because Node 10.x doesn't work
-    curl -sL https://deb.nodesource.com/setup_8.x | bash -; \
-    apt-get install -y --no-install-recommends nodejs=8*; \
-    rm -rf /var/lib/apt/lists/*; \
-    :
-
-# bower install step in zeppelin-web cannot be easily done as root userc
-RUN adduser --disabled-password --gecos "" installer
-USER installer
-
-# Build from source and install from tar package
-RUN set -euo pipefail && \
-    cd /tmp; \
-    git clone ${ZEPPELIN_GIT_URL}; \
-    cd -; \
-    cd /tmp/zeppelin; \
-    git checkout ${ZEPPELIN_REV}; \
-    SPARK_XY_VERSION="$(echo "${SPARK_VERSION}" | cut -d '.' -f1,2 | tr -d '\n')"; \
-    # The name of zeppelin directory might not be the same as the ZEPPELIN_REV, especially when building "master" where the directory might be "zeppelin-0.9.0-SNAPSHOT"
-    # Below can get the actual Zeppelin version, but can only be done within Docker RUN commands
-    ZEPPELIN_VERSION="$(cat pom.xml | grep "<name>Zeppelin</name>" -B1 | grep "<version>" | grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-SNAPSHOT)?")"; \
-    ZEPPELIN_X_VERSION="$(echo "${ZEPPELIN_VERSION}" | cut -d '.' -f1)"; \
-    ZEPPELIN_Y_VERSION="$(echo "${ZEPPELIN_VERSION}"  | cut -d '.' -f2)"; \
-    # Cannot use Hadoop 3 due to some nested dependency version mismatch issue
-    # HADOOP_X_VERSION="$(echo "${HADOOP_VERSION}" | cut -d '.' -f1 | tr -d '\n')"; \
-    # change_scala_version.sh seems deprecated, doesn't even support 2.12 as a param
-    # ./dev/change_scala_version.sh "${SCALA_VERSION}"; \
-    # See: https://issues.apache.org/jira/browse/ZEPPELIN-3552 and https://issues.apache.org/jira/browse/ZEPPELIN-3552
-    # Ignore interpreters based on the official Travis configuration
-    INTERPRETERS="$(cat .travis.yml | grep INTERPRETERS= | sed -E "s/- INTERPRETERS='(.+)'/\1/" | tr -d " ")"; \
-    FLAGS="-DskipTests -Pbuild-distr"; \
-    MODULES="-pl ${INTERPRETERS}"; \
-    # -Pscala-x.y is only used for v0.8.z, while -Pspark-scala-x.y is used for v0.9.z and onwards
-    if [ "${ZEPPELIN_X_VERSION}" -eq 0 ] && [ "${ZEPPELIN_Y_VERSION}" -le 8 ]; then \
-        SCALA_PROFILE_PREFIX="scala"; \
-    else \
-        SCALA_PROFILE_PREFIX="spark-scala"; \
-    fi; \
-    PROFILES="-Pspark-${SPARK_XY_VERSION} -P${SCALA_PROFILE_PREFIX}-${SCALA_VERSION} -Phadoop2"; \
-    mvn clean package ${FLAGS} ${MODULES} ${PROFILES}; \
-    cd -; \
-    :
-
-# Python version doesn't matter much for Zeppelin, so we just default to the latest 3.7
-FROM dsaidgovsg/spark-k8s-addons:v4_${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_python-3.7
+# Python version doesn't matter much for Zeppelin, so we just default to the latest 3.9
+FROM dsaidgovsg/spark-k8s-addons:v5_${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_java-${JAVA_VERSION}_python-3.9
 USER root
 
 ENV ZEPPELIN_HOME "/zeppelin"
 
-# Usage of wildcard works, but be aware that only the files within zeppelin-**/zeppelin-**/ will be copied over
-COPY --from=builder "/tmp/zeppelin/zeppelin-distribution/target/zeppelin-**/zeppelin-**" "${ZEPPELIN_HOME}"
-
 WORKDIR /zeppelin
 ENV ZEPPELIN_NOTEBOOK "/zeppelin/notebook"
-
-# Install JAR loader
-ARG ZEPPELIN_REV
-ARG SCALA_VERSION
 
 # Install required apt packages
 RUN set -euo pipefail && \
@@ -85,6 +20,14 @@ RUN set -euo pipefail && \
         wget \
         ; \
     rm -rf /var/lib/apt/lists/*; \
+    :
+
+# Install Zeppelin binary
+ARG ZEPPELIN_VERSION="0.10.1"
+RUN set -euo pipefail && \
+    wget https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
+    tar xvf zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz --strip-components=1; \
+    rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
     :
 
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
@@ -97,10 +40,20 @@ RUN set -euo pipefail && \
     ghafs --version; \
     :
 
-# Install custom OAuth authorizer with env domain checker
-# This is required even for general pac4j.oauth
-ARG PAC4J_AUTHORIZER_VERSION="v0.1.1"
-RUN wget -P ${ZEPPELIN_HOME}/lib/ https://github.com/dsaidgovsg/pac4j-authorizer/releases/download/${PAC4J_AUTHORIZER_VERSION}/pac4j-authorizer_${SCALA_VERSION}-${PAC4J_AUTHORIZER_VERSION}.jar
+# `buji-pac4j-4.1.1.jar` is the last tested working jar for Zeppelin (every version after this redirects to /null for OAuth2.0 some reason)
+# Install `buji-pac4j` and `pac4j-oauth` to support OIDC / OAuth2.0 login
+# We do not add / change shiro-* jars because the Zeppelin >= 0.10.1 uses shiro-* 1.7.0, which is sufficient for the above two dependencies
+RUN set -euo pipefail && \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/io/buji/buji-pac4j/4.1.1/buji-pac4j-4.1.1.jar; \
+    # https://github.com/bujiio/buji-pac4j/blob/buji-pac4j-4.1.1/pom.xml#L86:
+    # pac4j stated to be 3.7.0, but 3.9.0 is tested to work
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-core/3.9.0/pac4j-core-3.9.0.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-oauth/3.9.0/pac4j-oauth-3.9.0.jar; \
+    # https://github.com/pac4j/pac4j/blob/pac4j-3.9.0/pac4j-oauth/pom.xml#L16:
+    # scribejava stated to be 5.6.0, and we follow
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-apis/5.6.0/scribejava-apis-5.6.0.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-core/5.6.0/scribejava-core-5.6.0.jar; \
+    :
 
 RUN set -euo pipefail && \
     # Install tera-cli for runtime interpolation
@@ -112,11 +65,12 @@ RUN set -euo pipefail && \
 
 COPY docker ${ZEPPELIN_HOME}
 
-RUN adduser --disabled-password --gecos "" zeppelin
+RUN set -euo pipefail && \
+    adduser --disabled-password --gecos "" zeppelin; \
+    chown -R zeppelin:zeppelin "${ZEPPELIN_HOME}"; \
+    :
 
-ENV ZEPPELIN_IMPERSONATE_USER zeppelin
-ENV ZEPPELIN_IMPERSONATE_CMD "gosu zeppelin bash -c "
-ENV ZEPPELIN_IMPERSONATE_SPARK_PROXY_USER false
+USER zeppelin
 
 # Entrypoint-ish env vars to apply config templates
 ENV ZEPPELIN_APPLY_INTERPRETER_JSON "true"
