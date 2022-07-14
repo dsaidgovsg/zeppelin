@@ -1,0 +1,11 @@
+services:
+  zeppelin:
+    build: ../../
+    container_name: zeppelin
+    ports:
+      - 8080:8080
+    volumes:
+    # Change the example shiro.ini to include your github oauth2 client id + secret
+    - ./shiro.ini:/zeppelin/conf/shiro.ini:ro
+    environment:
+      - ZEPPELIN_APPLY_SHIRO=false

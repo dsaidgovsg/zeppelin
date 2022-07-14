@@ -20,11 +20,13 @@ jobs:
 {%- for spark in v.spark %}
 {%- for hadoop in v.hadoop %}
 {%- for scala in v.scala %}
+{%- for java in v.java %}
         - zeppelin:     "{{ zeppelin }}"
-          zeppelin_rev: "{{ mappings | get(key=zeppelin) }}"
           spark:        "{{ spark }}"
           hadoop:       "{{ hadoop }}"
           scala:        "{{ scala }}"
+          java:         "{{ java }}"
+{%- endfor %}
 {%- endfor %}
 {%- endfor %}
 {%- endfor %}
@@ -37,15 +39,15 @@ jobs:
       IMAGE_NAME: zeppelin
       {% raw -%}
       ZEPPELIN_VERSION: "${{ matrix.version.zeppelin }}"
-      ZEPPELIN_REV:     "${{ matrix.version.zeppelin_rev }}"
       SPARK_VERSION:    "${{ matrix.version.spark }}"
-      SCALA_VERSION:    "${{ matrix.version.scala }}"
       HADOOP_VERSION:   "${{ matrix.version.hadoop }}"
+      SCALA_VERSION:    "${{ matrix.version.scala }}"
+      JAVA_VERSION:     "${{ matrix.version.java }}"
       {%- endraw %}
     steps:
     - name: Set TAG_NAME as env var export
       run: |-
-        SUFFIX_TAG="${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_scala-${SCALA_VERSION}_hadoop-${HADOOP_VERSION}"
+        SUFFIX_TAG="${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_java-${JAVA_VERSION}"
 
         TAG_NAME="${SELF_VERSION}_${SUFFIX_TAG}"
         echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
@@ -73,10 +75,11 @@ jobs:
     - name: Build Dockerfile
       run: |-
         docker build . -t "${IMAGE_NAME}:${TAG_NAME}" \
-          --build-arg "ZEPPELIN_REV=${ZEPPELIN_REV}" \
+          --build-arg "ZEPPELIN_VERSION=${ZEPPELIN_VERSION}" \
           --build-arg "SPARK_VERSION=${SPARK_VERSION}" \
+          --build-arg "HADOOP_VERSION=${HADOOP_VERSION}" \
           --build-arg "SCALA_VERSION=${SCALA_VERSION}" \
-          --build-arg "HADOOP_VERSION=${HADOOP_VERSION}"
+          --build-arg "JAVA_VERSION=${JAVA_VERSION}"
     - name: Test the built image
       run: |-
         docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${TAG_NAME}"
