@@ -30,6 +30,11 @@ jobs:
           hadoop:       "3.3.2"
           scala:        "2.12"
           java:         "8"
+        - zeppelin:     "0.10.1"
+          spark:        "3.4.1"
+          hadoop:       "3.3.4"
+          scala:        "2.12"
+          java:         "8"
       fail-fast: true
     runs-on: ubuntu-latest
     env:
