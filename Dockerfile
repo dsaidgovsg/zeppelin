@@ -44,15 +44,15 @@ RUN set -euo pipefail && \
 # Install `buji-pac4j` and `pac4j-oauth` to support OIDC / OAuth2.0 login
 # We do not add / change shiro-* jars because the Zeppelin >= 0.10.1 uses shiro-* 1.7.0, which is sufficient for the above two dependencies
 RUN set -euo pipefail && \
-    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/io/buji/buji-pac4j/4.1.1/buji-pac4j-4.1.1.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/io/buji/buji-pac4j/8.1.0/buji-pac4j-8.1.0.jar; \
     # https://github.com/bujiio/buji-pac4j/blob/buji-pac4j-4.1.1/pom.xml#L86:
     # pac4j stated to be 3.7.0, but 3.9.0 is tested to work
-    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-core/3.9.0/pac4j-core-3.9.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-oauth/3.9.0/pac4j-oauth-3.9.0.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-core/5.7.0/pac4j-core-5.7.0.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/org/pac4j/pac4j-oauth/5.7.0/pac4j-oauth-5.7.0.jar; \
     # https://github.com/pac4j/pac4j/blob/pac4j-3.9.0/pac4j-oauth/pom.xml#L16:
     # scribejava stated to be 5.6.0, and we follow
-    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-apis/5.6.0/scribejava-apis-5.6.0.jar; \
-    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-core/5.6.0/scribejava-core-5.6.0.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-apis/8.3.2/scribejava-apis-8.3.2.jar; \
+    wget -P ${ZEPPELIN_HOME}/lib/ https://repo1.maven.org/maven2/com/github/scribejava/scribejava-core/8.3.2/scribejava-core-8.3.2.jar; \
     :
 
 RUN set -euo pipefail && \
