@@ -30,6 +30,16 @@ RUN set -euo pipefail && \
     rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
     :
 
+# Install GitHub Release Assets FUSE mount CLI (requires fuse install)
+ARG GHAFS_VERSION="v0.1.3"
+RUN set -euo pipefail && \
+    wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    mv ./ghafs /usr/local/bin/; \
+    ghafs --version; \
+    :
+
 RUN set -euo pipefail && \
     # Install tera-cli for runtime interpolation
     wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
