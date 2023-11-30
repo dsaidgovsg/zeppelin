@@ -50,7 +50,8 @@ USER zeppelin
 # Entrypoint-ish env vars to apply config templates
 ENV ZEPPELIN_APPLY_INTERPRETER_JSON "true"
 ENV ZEPPELIN_APPLY_ZEPPELIN_SITE "true"
-ENV ZEPPELIN_APPLY_SHIRO "false"
+ENV ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK = "false"
+ENV ZEPPELIN_APPLY_SHIRO "true"
 
 # Env var not expanded without Dockerfile, so need to go through sh
 CMD ["bash", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
