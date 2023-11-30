@@ -37,9 +37,9 @@ See [`CHANGELOG.md`](CHANGELOG.md) for details.
 ```bash
 # Can use any of the tags in zeppelin repo that follows semver. E.g. v0.8.2
 ZEPPELIN_VERSION="0.10.1"
-SPARK_VERSION="3.2.1"
-HADOOP_VERSION="3.3.1"
-SCALA_VERSION="2.13"
+SPARK_VERSION="3.4.1"
+HADOOP_VERSION="3.3.4"
+SCALA_VERSION="2.12"
 JAVA_VERSION="8"
 
 docker build . -t zeppelin \
