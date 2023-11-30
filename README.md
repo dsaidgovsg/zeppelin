@@ -54,7 +54,7 @@ docker run --rm -it --name zeppelin -p 8080:8080 zeppelin
 
 Wait a while and then access <http://localhost:8080/> in your web browser.
 
-The default username is `user1`, and password is `password2`.
+As Spark 3.4.1 is not officially supported by Zeppelin, there is a need to go to `Interpreter` and change `zeppelin.spark.enableSupportedVersionCheck` to false for Spark 3.4.1 to work with Zeppelin
 
 To test that the Spark interpreter is working, simply create a quick notebook
 with Spark as the interpreter.

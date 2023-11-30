@@ -30,6 +30,16 @@ RUN set -euo pipefail && \
     rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
     :
 
+# Install GitHub Release Assets FUSE mount CLI (requires fuse install)
+ARG GHAFS_VERSION="v0.1.3"
+RUN set -euo pipefail && \
+    wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    mv ./ghafs /usr/local/bin/; \
+    ghafs --version; \
+    :
+
 RUN set -euo pipefail && \
     # Install tera-cli for runtime interpolation
     wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
@@ -50,8 +60,7 @@ USER zeppelin
 # Entrypoint-ish env vars to apply config templates
 ENV ZEPPELIN_APPLY_INTERPRETER_JSON "true"
 ENV ZEPPELIN_APPLY_ZEPPELIN_SITE "true"
-ENV ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK = "false"
-ENV ZEPPELIN_APPLY_SHIRO "true"
+ENV ZEPPELIN_APPLY_SHIRO "false"
 
 # Env var not expanded without Dockerfile, so need to go through sh
 CMD ["bash", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
