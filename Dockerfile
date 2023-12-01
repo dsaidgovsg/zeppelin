@@ -33,8 +33,17 @@ RUN set -euo pipefail && \
 # Download reload4j jar
 ARG RELOAD4J_VERSION="1.2.25"
 RUN set -euo pipefail && \
-    wget "https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O ${ZEPPELIN_HOME}/lib/reload4j-${RELOAD4J_VERSION}.jar;\ 
+    wget "https://repo1.maven.org/maven2/csh/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O ${ZEPPELIN_HOME}/lib/reload4j-${RELOAD4J_VERSION}.jar;\ 
     rm ${ZEPPELIN_HOME}/lib/log4j-1.2.17.jar; \
+   
+# Install GitHub Release Assets FUSE mount CLI (requires fuse install)
+ARG GHAFS_VERSION="v0.1.3"
+RUN set -euo pipefail && \
+    wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+    mv ./ghafs /usr/local/bin/; \
+    ghafs --version; \
     :
 
 RUN set -euo pipefail && \
@@ -57,8 +66,7 @@ USER zeppelin
 # Entrypoint-ish env vars to apply config templates
 ENV ZEPPELIN_APPLY_INTERPRETER_JSON "true"
 ENV ZEPPELIN_APPLY_ZEPPELIN_SITE "true"
-ENV ZEPPELIN_SPARK_ENABLESUPPORTEDVERSIONCHECK = "false"
-ENV ZEPPELIN_APPLY_SHIRO "true"
+ENV ZEPPELIN_APPLY_SHIRO "false"
 
 # Env var not expanded without Dockerfile, so need to go through sh
 CMD ["bash", "-c", "${ZEPPELIN_HOME}/run-zeppelin.sh"]
