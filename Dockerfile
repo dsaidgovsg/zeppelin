@@ -33,9 +33,10 @@ RUN set -euo pipefail && \
 # Download reload4j jar
 ARG RELOAD4J_VERSION="1.2.25"
 RUN set -euo pipefail && \
-    wget "https://repo1.maven.org/maven2/csh/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O ${ZEPPELIN_HOME}/lib/reload4j-${RELOAD4J_VERSION}.jar;\ 
-    rm ${ZEPPELIN_HOME}/lib/log4j-1.2.17.jar; \
-   
+    wget "https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O /zeppelin/lib/reload4j-${RELOAD4J_VERSION}.jar; \
+    rm /zeppelin/lib/log4j-1.2.17.jar; \
+    :
+
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
 ARG GHAFS_VERSION="v0.1.3"
 RUN set -euo pipefail && \
