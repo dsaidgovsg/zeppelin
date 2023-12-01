@@ -49,7 +49,7 @@ docker build . -t zeppelin \
     --build-arg SCALA_VERSION="${SCALA_VERSION}" \
     --build-arg JAVA_VERSION="${JAVA_VERSION}"
 
-docker run --rm -it --name zeppelin -p 8080:8080 zeppelin
+docker run -d --rm -it --name zeppelin -p 8080:8080 zeppelin
 ```
 
 Wait a while and then access <http://localhost:8080/> in your web browser.
