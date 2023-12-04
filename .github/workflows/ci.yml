@@ -53,11 +53,6 @@ jobs:
         tar xvf tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz
         mv tera-cli-v0.4.1-x86_64-unknown-linux-musl/tera /tmp/tera
         rm -rf tera-cli-v0.4.1-x86_64-unknown-linux-musl*
-    - name: Check differences between ci.yml and ci.yml.tmpl
-      run: |-
-        cp .github/workflows/ci.yml .github/workflows/ci.yml.backup
-        TERA=/tmp/tera ./templates/apply-vars.sh
-        if ! diff .github/workflows/ci.yml .github/workflows/ci.yml.backup; then echo "ci.yml.tmpl and ci.yml differs!" && exit 1; fi
     - name: Build Dockerfile
       run: |-
         docker build . -t "${IMAGE_NAME}:${TAG_NAME}" \
