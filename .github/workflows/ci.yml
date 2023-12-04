@@ -33,7 +33,7 @@ jobs:
     steps:
     - name: Set TAG_NAME as env var export
       run: |-
-        SUFFIX_TAG="${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_java-${JAVA_VERSION}"
+        SUFFIX_TAG="${ZEPPELIN_VERSION}_spark-${SPARK_VERSION}_hadoop-${HADOOP_VERSION}_scala-${SCALA_VERSION}_java-${JAVA_VERSION}-tytesting"
 
         TAG_NAME="${SELF_VERSION}_${SUFFIX_TAG}"
         echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV

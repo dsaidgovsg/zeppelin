@@ -22,38 +22,38 @@ RUN set -euo pipefail && \
     rm -rf /var/lib/apt/lists/*; \
     :
 
-# Install Zeppelin binary
-ARG ZEPPELIN_VERSION="0.10.1"
-RUN set -euo pipefail && \
-    wget https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
-    tar xvf zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz --strip-components=1; \
-    rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
-    :
+# # Install Zeppelin binary
+# ARG ZEPPELIN_VERSION="0.10.1"
+# RUN set -euo pipefail && \
+#     wget https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
+#     tar xvf zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz --strip-components=1; \
+#     rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
+#     :
 
-# Download reload4j jar
-ARG RELOAD4J_VERSION="1.2.25"
-RUN set -euo pipefail && \
-    wget "https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O /zeppelin/lib/reload4j-${RELOAD4J_VERSION}.jar; \
-    rm /zeppelin/lib/log4j-1.2.17.jar; \
-    :
+# # Download reload4j jar
+# ARG RELOAD4J_VERSION="1.2.25"
+# RUN set -euo pipefail && \
+#     wget "https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O /zeppelin/lib/reload4j-${RELOAD4J_VERSION}.jar; \
+#     rm /zeppelin/lib/log4j-1.2.17.jar; \
+#     :
 
-# Install GitHub Release Assets FUSE mount CLI (requires fuse install)
-ARG GHAFS_VERSION="v0.1.3"
-RUN set -euo pipefail && \
-    wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
-    tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
-    rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
-    mv ./ghafs /usr/local/bin/; \
-    ghafs --version; \
-    :
+# # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
+# ARG GHAFS_VERSION="v0.1.3"
+# RUN set -euo pipefail && \
+#     wget https://github.com/guangie88/ghafs/releases/download/${GHAFS_VERSION}/ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+#     tar xvf ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+#     rm ghafs-${GHAFS_VERSION}-linux-amd64.tar.gz; \
+#     mv ./ghafs /usr/local/bin/; \
+#     ghafs --version; \
+#     :
 
-RUN set -euo pipefail && \
-    # Install tera-cli for runtime interpolation
-    wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
-    tar xvf tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
-    mv tera-cli-v0.4.1-x86_64-unknown-linux-musl/tera /usr/local/bin/tera; \
-    rm -rf tera-cli-v0.4.1-x86_64-unknown-linux-musl*; \
-    :
+# RUN set -euo pipefail && \
+#     # Install tera-cli for runtime interpolation
+#     wget https://github.com/guangie88/tera-cli/releases/download/v0.4.1/tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
+#     tar xvf tera-cli-v0.4.1-x86_64-unknown-linux-musl.tar.gz; \
+#     mv tera-cli-v0.4.1-x86_64-unknown-linux-musl/tera /usr/local/bin/tera; \
+#     rm -rf tera-cli-v0.4.1-x86_64-unknown-linux-musl*; \
+#     :
 
 COPY docker ${ZEPPELIN_HOME}
 
