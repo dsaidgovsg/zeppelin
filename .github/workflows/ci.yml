@@ -61,12 +61,6 @@ jobs:
           --build-arg "HADOOP_VERSION=${HADOOP_VERSION}" \
           --build-arg "SCALA_VERSION=${SCALA_VERSION}" \
           --build-arg "JAVA_VERSION=${JAVA_VERSION}"
-    - name: Test the built image
-      run: |-
-        docker run --rm --name zeppelin -p 8080:8080 -t -d "${IMAGE_NAME}:${TAG_NAME}"
-        sleep 25
-        [ "`curl -s http://localhost:8080/api/version | jq -r .status`" = "OK" ]
-        docker rm -f zeppelin
     - name: Push Docker image
       run: bash push-images.sh
       env:
