@@ -22,13 +22,13 @@ RUN set -euo pipefail && \
     rm -rf /var/lib/apt/lists/*; \
     :
 
-# # Install Zeppelin binary
-# ARG ZEPPELIN_VERSION="0.10.1"
-# RUN set -euo pipefail && \
-#     wget https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
-#     tar xvf zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz --strip-components=1; \
-#     rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
-#     :
+# Install Zeppelin binary
+ARG ZEPPELIN_VERSION="0.10.1"
+RUN set -euo pipefail && \
+    wget https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
+    tar xvf zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz --strip-components=1; \
+    rm zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz; \
+    :
 
 # # Download reload4j jar
 # ARG RELOAD4J_VERSION="1.2.25"
