@@ -32,9 +32,12 @@ RUN set -euo pipefail && \
 
 # Download reload4j jar
 ARG RELOAD4J_VERSION="1.2.25"
+ARG SLF4J_RELOAD4J_VERSION="2.0.9"
 RUN set -euo pipefail && \
     wget "https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/${RELOAD4J_VERSION}/reload4j-${RELOAD4J_VERSION}.jar" -O /zeppelin/lib/reload4j-${RELOAD4J_VERSION}.jar; \
+    wget "https://repo1.maven.org/maven2/org/slf4j/slf4j-reload4j/${SLF4J_RELOAD4J_VERSION}/slf4j-reload4j-${SLF4J_RELOAD4J_VERSION}.jar" -O /zeppelin/lib/slf4j-reload4j-${SLF4J_RELOAD4J_VERSION}.jar; \
     rm /zeppelin/lib/log4j-1.2.17.jar; \
+    rm /zeppelin/lib/slf4j-log4j12-1.7.30.jar; \
     :
 
 # Install GitHub Release Assets FUSE mount CLI (requires fuse install)
