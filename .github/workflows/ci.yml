@@ -16,6 +16,16 @@ jobs:
       matrix:
         version:
         - zeppelin:     "0.10.1"
+          spark:        "3.2.2"
+          hadoop:       "3.3.1"
+          scala:        "2.12"
+          java:         "8"
+        - zeppelin:     "0.10.1"
+          spark:        "3.3.0"
+          hadoop:       "3.3.2"
+          scala:        "2.12"
+          java:         "8"
+        - zeppelin:     "0.10.1"
           spark:        "3.4.1"
           hadoop:       "3.3.4"
           scala:        "2.12"
@@ -23,7 +33,7 @@ jobs:
       fail-fast: true
     runs-on: ubuntu-latest
     env:
-      SELF_VERSION: "v4"
+      SELF_VERSION: "v5"
       IMAGE_NAME: zeppelin
       ZEPPELIN_VERSION: "${{ matrix.version.zeppelin }}"
       SPARK_VERSION:    "${{ matrix.version.spark }}"
